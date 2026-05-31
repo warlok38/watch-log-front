@@ -2,9 +2,11 @@ import { create } from 'zustand'
 
 import type { WatchStatus } from '@/entities/show'
 
+export type LibraryFilter = WatchStatus | 'all' | 'archive'
+
 type AppState = {
-  activeStatus: WatchStatus | 'all'
-  setActiveStatus: (status: WatchStatus | 'all') => void
+  activeStatus: LibraryFilter
+  setActiveStatus: (status: LibraryFilter) => void
 }
 
 export const useAppStore = create<AppState>((set) => ({

@@ -31,11 +31,16 @@ export function ShowCard({ show, watchedEpisodes, totalEpisodes }: ShowCardProps
         <div className="show-card__body">
           <div className="show-card__title-row">
             <h3>{show.title}</h3>
-            <Tag color={show.kind === 'anime' ? 'purple' : 'primary'}>{show.kind}</Tag>
+            <Tag color={show.kind === 'anime' ? 'purple' : 'primary'}>{t(`kind.${show.kind}`)}</Tag>
+          </div>
+          <div className="show-card__tags">
+            <Tag color="success">{t(`status.${show.status}`)}</Tag>
+            <Tag>{t(`externalStatus.${show.externalStatus}`)}</Tag>
           </div>
           <p>{t('home.progress', { season: show.currentSeason, episode: show.currentEpisode })}</p>
           <ProgressBar percent={progress} />
           <Button
+            className="quick-mark-button"
             size="small"
             color="primary"
             fill="solid"
@@ -44,7 +49,7 @@ export function ShowCard({ show, watchedEpisodes, totalEpisodes }: ShowCardProps
               void handleQuickMark()
             }}
           >
-            + S{show.currentSeason}E{nextEpisode}
+            {t('home.quickMark', { season: show.currentSeason, episode: nextEpisode })}
           </Button>
         </div>
       </div>

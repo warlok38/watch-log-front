@@ -16,8 +16,12 @@ export function HomePage() {
   const shows = useLiveQuery(() => db.shows.orderBy('updatedAt').reverse().toArray(), [])
   const episodes = useLiveQuery(() => db.episodes.toArray(), [])
 
-  const filteredShows =
-    activeStatus === 'all' ? shows : shows?.filter((show) => show.status === activeStatus)
+  const filteredShows = shows?.filter((show) => {
+    if (activeStatus === 'archive') return show.isArchived
+    if (show.isArchived) return false
+
+    return activeStatus === 'all' || show.status === activeStatus
+  })
 
   return (
     <section className="page">

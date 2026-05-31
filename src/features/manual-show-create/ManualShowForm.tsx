@@ -27,7 +27,7 @@ export function ManualShowForm() {
     })
 
     Toast.show({ content: t('search.add') })
-    navigate(routes.showDetails(id))
+    navigate(routes.showDetails(id), { state: { fromAdd: true } })
   }
 
   return (

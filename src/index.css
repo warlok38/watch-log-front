@@ -1,13 +1,47 @@
 :root {
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --bg: #f5f7fb;
+  color-scheme: light;
+
+  --bg: #f4f7fb;
+  --bg-accent: #eaf1ff;
   --surface: #ffffff;
+  --surface-elevated: #ffffff;
   --text: #111827;
   --muted: #6b7280;
-  --border: #e5e7eb;
-  --primary: #1677ff;
-  --radius: 20px;
+  --border: #dbe3ef;
+  --primary: #315efb;
+  --primary-soft: #e8efff;
+  --danger: #e5484d;
+  --shadow: 0 18px 50px rgb(30 64 175 / 10%);
+  --shadow-soft: 0 10px 30px rgb(15 23 42 / 8%);
+  --radius: 22px;
+  --radius-sm: 14px;
+
+  --adm-color-primary: var(--primary);
+  --adm-color-success: #16a34a;
+  --adm-color-warning: #f59e0b;
+  --adm-color-danger: var(--danger);
+  --adm-color-text: var(--text);
+  --adm-color-text-secondary: var(--muted);
+  --adm-color-weak: var(--muted);
+  --adm-color-light: #eef3fb;
+  --adm-color-border: var(--border);
+  --adm-color-background: var(--bg);
+  --adm-color-background-body: var(--bg);
+  --adm-color-white: var(--surface);
+  --adm-color-box: #eef3fb;
+  --adm-color-fill-content: var(--adm-color-box);
+  --adm-color-wathet: var(--primary-soft);
+  --adm-color-text-light-solid: #ffffff;
+  --adm-color-text-dark-solid: #111827;
+  --adm-border-color: var(--border);
+  --adm-border-radius-s: 10px;
+  --adm-border-radius-m: 14px;
+  --adm-border-radius-l: var(--radius);
+  --adm-font-size-main: 16px;
+  --adm-font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --adm-box-shadow: var(--shadow-soft);
 
   font: 16px/1.5 system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color: var(--text);
@@ -18,13 +52,89 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg: #090d16;
+  --bg-accent: #111a2e;
+  --surface: #111827;
+  --surface-elevated: #182235;
+  --text: #f8fafc;
+  --muted: #9aa8bd;
+  --border: #273449;
+  --primary: #89a6ff;
+  --primary-soft: #172344;
+  --danger: #ff7a7a;
+  --shadow: 0 18px 60px rgb(0 0 0 / 35%);
+  --shadow-soft: 0 10px 36px rgb(0 0 0 / 26%);
+
+  --adm-color-primary: var(--primary);
+  --adm-color-danger: var(--danger);
+  --adm-color-text: var(--text);
+  --adm-color-text-secondary: var(--muted);
+  --adm-color-weak: var(--muted);
+  --adm-color-light: #1b2538;
+  --adm-color-border: var(--border);
+  --adm-color-background: var(--surface);
+  --adm-color-background-body: var(--bg);
+  --adm-color-white: var(--surface-elevated);
+  --adm-color-box: #111827;
+  --adm-color-fill-content: #1b2538;
+  --adm-color-wathet: var(--primary-soft);
+  --adm-color-text-light-solid: #ffffff;
+  --adm-color-text-dark-solid: #050816;
+  --adm-border-color: var(--border);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+
+    --bg: #090d16;
+    --bg-accent: #111a2e;
+    --surface: #111827;
+    --surface-elevated: #182235;
+    --text: #f8fafc;
+    --muted: #9aa8bd;
+    --border: #273449;
+    --primary: #89a6ff;
+    --primary-soft: #172344;
+    --danger: #ff7a7a;
+    --shadow: 0 18px 60px rgb(0 0 0 / 35%);
+    --shadow-soft: 0 10px 36px rgb(0 0 0 / 26%);
+
+    --adm-color-primary: var(--primary);
+    --adm-color-danger: var(--danger);
+    --adm-color-text: var(--text);
+    --adm-color-text-secondary: var(--muted);
+    --adm-color-weak: var(--muted);
+    --adm-color-light: #1b2538;
+    --adm-color-border: var(--border);
+    --adm-color-background: var(--surface);
+    --adm-color-background-body: var(--bg);
+    --adm-color-white: var(--surface-elevated);
+    --adm-color-box: #111827;
+    --adm-color-fill-content: #1b2538;
+    --adm-color-wathet: var(--primary-soft);
+    --adm-color-text-light-solid: #ffffff;
+    --adm-color-text-dark-solid: #050816;
+    --adm-border-color: var(--border);
+  }
+}
+
 #root {
   min-height: 100svh;
 }
 
 body {
   margin: 0;
-  background: var(--bg);
+  background:
+    radial-gradient(circle at top left, var(--bg-accent), transparent 34rem),
+    var(--bg);
 }
 
 * {
@@ -35,11 +145,14 @@ h1 {
   margin: 0;
   font-size: 28px;
   line-height: 1.1;
+  letter-spacing: -0.04em;
 }
 
 h2,
 h3 {
   margin: 0;
+  color: var(--text);
+  letter-spacing: -0.02em;
 }
 
 p {
@@ -51,7 +164,9 @@ p {
   max-width: 520px;
   min-height: 100svh;
   margin: 0 auto;
-  background: var(--bg);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--bg-accent) 58%, transparent), transparent 18rem),
+    var(--bg);
   border-inline: 1px solid var(--border);
   position: relative;
 }
@@ -68,16 +183,22 @@ p {
   left: 0;
   max-width: 520px;
   margin: 0 auto;
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
   border-top: 1px solid var(--border);
+  box-shadow: 0 -12px 32px rgb(15 23 42 / 8%);
+  backdrop-filter: blur(18px);
   z-index: 10;
 }
 
 .page {
   display: flex;
   flex-direction: column;
+  gap: 18px;
+  padding: calc(22px + var(--safe-top)) 16px 22px;
+}
+
+.add-page {
   gap: 16px;
-  padding: calc(20px + var(--safe-top)) 16px 20px;
 }
 
 .page-header {
@@ -94,24 +215,28 @@ p {
 .show-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .show-card {
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
   border-radius: var(--radius);
+  background: var(--surface-elevated);
+  box-shadow: var(--shadow-soft);
 }
 
 .show-card__layout {
   display: grid;
   grid-template-columns: 76px 1fr;
-  gap: 12px;
+  gap: 14px;
 }
 
 .show-card__body {
   display: flex;
   min-width: 0;
   flex-direction: column;
-  gap: 8px;
+  gap: 9px;
 }
 
 .show-card__title-row {
@@ -127,12 +252,24 @@ p {
   text-overflow: ellipsis;
 }
 
+.show-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.quick-mark-button {
+  align-self: flex-start;
+}
+
 .show-poster {
   width: 76px;
   height: 108px;
   object-fit: cover;
-  border-radius: 14px;
-  background: #dbeafe;
+  border: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
+  border-radius: var(--radius-sm);
+  background: linear-gradient(145deg, var(--primary-soft), color-mix(in srgb, var(--surface) 90%, var(--primary)));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 22%);
 }
 
 .show-poster--fallback {
@@ -149,15 +286,29 @@ p {
   margin-top: 40px;
 }
 
+.empty-state {
+  padding: 24px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+}
+
 .manual-collapse {
   border-radius: var(--radius);
   overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--border) 58%, transparent);
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
 }
 
 .details-hero {
   display: grid;
   grid-template-columns: 96px 1fr;
   gap: 16px;
+  padding: 16px;
+  border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+  border-radius: var(--radius);
+  background: var(--surface-elevated);
+  box-shadow: var(--shadow-soft);
 }
 
 .details-hero .show-poster {
@@ -165,17 +316,32 @@ p {
   height: 136px;
 }
 
+.details-hero__body {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.details-actions {
+  display: grid;
+  gap: 10px;
+}
+
 .season-block {
   display: flex;
   flex-direction: column;
   gap: 12px;
   padding: 16px;
-  background: var(--surface);
+  border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+  background: var(--surface-elevated);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
 }
 
 .season-block__header {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
 }
@@ -188,4 +354,139 @@ p {
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
+
+.app-shell .adm-card {
+  color: var(--text);
+  background: var(--surface-elevated);
+}
+
+.app-shell .adm-card-header {
+  border-color: var(--border);
+}
+
+.app-shell .adm-card-header-title {
+  color: var(--text);
+}
+
+.app-shell .adm-card-body {
+  padding: 14px;
+  color: var(--text);
+}
+
+.app-shell .adm-button {
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.app-shell .adm-button:not(.adm-button-fill-none) {
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
+.app-shell .adm-button-fill-outline {
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+}
+
+.app-shell .adm-tab-bar {
+  color: var(--muted);
+}
+
+.app-shell .adm-tab-bar-item-active {
+  color: var(--primary);
+}
+
+.app-shell .adm-tab-bar-item-icon {
+  font-size: 22px;
+}
+
+.app-shell .adm-capsule-tabs-header {
+  border: 0;
+}
+
+.app-shell .adm-capsule-tabs-tab {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  color: var(--muted);
+}
+
+.app-shell .adm-capsule-tabs-tab-active {
+  background: var(--primary);
+  color: #fff;
+}
+
+.app-shell .adm-selector {
+  --color: color-mix(in srgb, var(--surface) 84%, transparent);
+  --checked-color: var(--primary-soft);
+  --text-color: var(--text);
+  --checked-text-color: var(--primary);
+  --border: 1px solid var(--border);
+  --checked-border: 1px solid var(--primary);
+  --border-radius: 10px;
+}
+
+.app-shell .adm-selector-item {
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 84%, transparent);
+  color: var(--text);
+}
+
+.app-shell .adm-selector-item-active {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.app-shell .adm-progress-bar {
+  --track-width: 6px;
+  --track-color: color-mix(in srgb, var(--border) 65%, transparent);
+  --fill-color: var(--primary);
+}
+
+.app-shell .adm-search-bar-input-box,
+.app-shell .adm-form,
+.app-shell .adm-list,
+.app-shell .adm-collapse,
+.adm-dialog-body,
+.adm-toast-main {
+  background: var(--surface-elevated);
+  color: var(--text);
+}
+
+.add-search-panel {
+  padding: 4px;
+  border: 1px solid color-mix(in srgb, var(--border) 54%, transparent);
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--surface) 74%, transparent);
+  box-shadow: var(--shadow-soft);
+}
+
+.app-shell .adm-search-bar {
+  --height: 48px;
+  --border-radius: 16px;
+  padding: 0;
+}
+
+.app-shell .adm-search-bar-input-box {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface-elevated);
+  color: var(--text);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 25%);
+}
+
+.app-shell .adm-search-bar-input-box input {
+  color: var(--text);
+  font-size: 15px;
+}
+
+.app-shell .adm-search-bar-input-box input::placeholder {
+  color: color-mix(in srgb, var(--muted) 72%, transparent);
+}
+
+.app-shell .adm-list-item {
+  background: transparent;
+}
+
+.app-shell .adm-list-item-content {
+  border-color: var(--border);
 }

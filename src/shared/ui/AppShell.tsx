@@ -1,4 +1,4 @@
-import { AppOutline, SearchOutline, SetOutline } from 'antd-mobile-icons'
+import { AddOutline, AppOutline, SetOutline } from 'antd-mobile-icons'
 import { SafeArea, TabBar } from 'antd-mobile'
 import type { PropsWithChildren } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -8,7 +8,7 @@ import { routes } from '@/shared/config/routes'
 
 const tabs = [
   { key: routes.home, icon: <AppOutline />, labelKey: 'nav.library' },
-  { key: routes.search, icon: <SearchOutline />, labelKey: 'nav.search' },
+  { key: routes.search, icon: <AddOutline />, labelKey: 'nav.add' },
   { key: routes.settings, icon: <SetOutline />, labelKey: 'nav.settings' },
 ] as const
 
@@ -16,7 +16,7 @@ export function AppShell({ children }: PropsWithChildren) {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
-  const activeKey = location.pathname.startsWith('/shows') ? routes.home : location.pathname
+  const activeKey = location.pathname
 
   return (
     <div className="app-shell">

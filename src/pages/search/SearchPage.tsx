@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Collapse, Empty, ErrorBlock, SearchBar, SpinLoading } from 'antd-mobile'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { ManualShowForm } from '@/features/manual-show-create'
@@ -8,25 +8,27 @@ import { SearchResultCard } from '@/features/show-search'
 import { searchShows } from '@/shared/api'
 import { PageHeader } from '@/shared/ui'
 
+const SEARCH_DEBOUNCE_MS = 500
+
 export function SearchPage() {
   const { t } = useTranslation()
   const [query, setQuery] = useState('')
   const normalizedQuery = query.trim()
+  const debouncedQuery = useDebouncedValue(normalizedQuery, SEARCH_DEBOUNCE_MS)
   const { data, isFetching, isError } = useQuery({
-    queryKey: ['show-search', normalizedQuery],
-    queryFn: () => searchShows(normalizedQuery),
-    enabled: normalizedQuery.length > 1,
+    queryKey: ['show-search', debouncedQuery],
+    queryFn: () => searchShows(debouncedQuery),
+    enabled: debouncedQuery.length > 1,
   })
+  const isWaitingForDebounce = normalizedQuery.length > 1 && normalizedQuery !== debouncedQuery
+  const canShowSearchState = normalizedQuery === debouncedQuery && debouncedQuery.length > 1
 
   return (
-    <section className="page">
-      <PageHeader title={t('search.title')} />
-      <SearchBar
-        placeholder={t('search.placeholder')}
-        value={query}
-        onChange={setQuery}
-        showCancelButton
-      />
+    <section className="page add-page">
+      <PageHeader title={t('search.title')} subtitle={t('search.subtitle')} />
+      <div className="add-search-panel">
+        <SearchBar placeholder={t('search.placeholder')} value={query} onChange={setQuery} />
+      </div>
 
       <Collapse className="manual-collapse">
         <Collapse.Panel key="manual" title={t('search.addManual')}>
@@ -34,19 +36,34 @@ export function SearchPage() {
         </Collapse.Panel>
       </Collapse>
 
-      {isFetching && <SpinLoading className="center-loader" />}
+      {(isWaitingForDebounce || isFetching) && <SpinLoading className="center-loader" />}
       {isError && <ErrorBlock status="default" />}
-      {normalizedQuery.length > 1 && !isFetching && !data?.length && (
+      {canShowSearchState && !isFetching && !data?.length && (
         <Empty className="empty-state" description={t('search.nothing')} />
       )}
       <div className="show-list">
-        {data?.map((result) => (
-          <SearchResultCard
-            key={`${result.externalProvider}-${result.externalId}-${result.title}`}
-            result={result}
-          />
-        ))}
+        {canShowSearchState &&
+          data?.map((result) => (
+            <SearchResultCard
+              key={`${result.externalProvider}-${result.externalId}-${result.title}`}
+              result={result}
+            />
+          ))}
       </div>
     </section>
   )
+}
+
+function useDebouncedValue<T>(value: T, delay: number) {
+  const [debouncedValue, setDebouncedValue] = useState(value)
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setDebouncedValue(value)
+    }, delay)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [delay, value])
+
+  return debouncedValue
 }
