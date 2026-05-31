@@ -3,8 +3,11 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import path from 'node:path'
 
+const projectRoot = path.resolve(__dirname).replace(/^[a-z]:/, (drive) => drive.toUpperCase())
+
 // https://vite.dev/config/
 export default defineConfig({
+  root: projectRoot,
   plugins: [
     react(),
     VitePWA({
@@ -77,10 +80,12 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      '@': path.resolve(projectRoot, './src'),
     },
   },
   test: {
+    root: projectRoot,
+    globals: true,
     environment: 'jsdom',
     setupFiles: './src/test/setup.ts',
   },
