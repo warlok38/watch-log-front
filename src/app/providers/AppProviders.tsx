@@ -1,5 +1,10 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ConfigProvider, setDefaultConfig } from 'antd-mobile'
+import enUS from 'antd-mobile/es/locales/en-US'
+import ruRU from 'antd-mobile/es/locales/ru-RU'
 import type { PropsWithChildren } from 'react'
+import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { BrowserRouter } from 'react-router-dom'
 
 import '@/shared/i18n'
@@ -14,9 +19,18 @@ const queryClient = new QueryClient({
 })
 
 export function AppProviders({ children }: PropsWithChildren) {
+  const { i18n } = useTranslation()
+  const locale = i18n.resolvedLanguage === 'en' ? enUS : ruRU
+
+  useEffect(() => {
+    setDefaultConfig({ locale })
+  }, [locale])
+
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>{children}</BrowserRouter>
+      <ConfigProvider locale={locale}>
+        <BrowserRouter>{children}</BrowserRouter>
+      </ConfigProvider>
     </QueryClientProvider>
   )
 }
