@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { LanguageSwitcher } from '@/features/language-switcher'
 import { ThemeSwitcher } from '@/features/theme-switcher'
 import { nativeBridge } from '@/shared/native'
+import type { NativeUnsubscribe } from '@/shared/native'
 import { PageHeader } from '@/shared/ui'
 
 export function SettingsPage() {
@@ -12,17 +13,17 @@ export function SettingsPage() {
   const [isOnline, setIsOnline] = useState(navigator.onLine)
 
   useEffect(() => {
-    const syncNetworkStatus = () => {
-      void nativeBridge.getNetworkStatus().then((status) => setIsOnline(status.connected))
-    }
+    let unsubscribe: NativeUnsubscribe | undefined
 
-    syncNetworkStatus()
-    window.addEventListener('online', syncNetworkStatus)
-    window.addEventListener('offline', syncNetworkStatus)
+    void nativeBridge.getNetworkStatus().then((status) => setIsOnline(status.connected))
+    void nativeBridge
+      .onNetworkStatusChange((status) => setIsOnline(status.connected))
+      .then((cleanup) => {
+        unsubscribe = cleanup
+      })
 
     return () => {
-      window.removeEventListener('online', syncNetworkStatus)
-      window.removeEventListener('offline', syncNetworkStatus)
+      unsubscribe?.()
     }
   }, [])
 

@@ -6,6 +6,19 @@ export const webBridge: NativeBridge = {
   async getNetworkStatus() {
     return { connected: navigator.onLine }
   },
+  async onNetworkStatusChange(callback) {
+    const syncNetworkStatus = () => {
+      callback({ connected: navigator.onLine })
+    }
+
+    window.addEventListener('online', syncNetworkStatus)
+    window.addEventListener('offline', syncNetworkStatus)
+
+    return () => {
+      window.removeEventListener('online', syncNetworkStatus)
+      window.removeEventListener('offline', syncNetworkStatus)
+    }
+  },
   async onBackButton() {
     return () => undefined
   },

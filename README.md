@@ -76,6 +76,7 @@ The project is ready for a local Git workflow. Remote repository configuration i
 - Add a dedicated waiting zone with nearest upcoming episode dates.
 - Continue UX research across Showly, SeriesGuide, Trakt, TV Time, and EpisodeKit for faster add and episode-marking flows.
 - Add an "up next" queue, release calendar, and richer episode metadata.
+- Explore a browser extension that detects video progress only on user-approved sites and auto-logs watched episodes, including near-end heuristics for paused credits.
 - Better episode metadata sync and refresh from providers.
 - Push or local reminders for new seasons.
 - Optional cloud sync while keeping account-free local mode.

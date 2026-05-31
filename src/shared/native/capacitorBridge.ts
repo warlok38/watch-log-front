@@ -28,6 +28,15 @@ export const capacitorBridge: NativeBridge = {
     const status = await Network.getStatus()
     return { connected: status.connected }
   },
+  async onNetworkStatusChange(callback) {
+    const listener = await Network.addListener('networkStatusChange', (status) => {
+      callback({ connected: status.connected })
+    })
+
+    return () => {
+      void listener.remove()
+    }
+  },
   async onBackButton(callback) {
     const listener = await App.addListener('backButton', callback)
     return () => {

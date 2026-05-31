@@ -5,4 +5,4 @@ import { webBridge } from './webBridge'
 export const nativeBridge: NativeBridge = capacitorBridge.isNative ? capacitorBridge : webBridge
 
 export { setupNativeUi }
-export type { BackButtonUnsubscribe, NativeBridge, NativePlatform, NetworkStatus } from './types'
+export type { BackButtonUnsubscribe, NativeBridge, NativePlatform, NativeUnsubscribe, NetworkStatus } from './types'
