@@ -4,10 +4,17 @@ import { VitePWA } from 'vite-plugin-pwa'
 import path from 'node:path'
 
 const projectRoot = path.resolve(__dirname).replace(/^[a-z]:/, (drive) => drive.toUpperCase())
+const base = process.env.VITE_BASE_PATH ?? '/'
+
+function withBase(assetPath: string): string {
+  const normalizedPath = assetPath.startsWith('/') ? assetPath.slice(1) : assetPath
+  return `${base}${normalizedPath}`.replace(/\/{2,}/g, '/')
+}
 
 // https://vite.dev/config/
 export default defineConfig({
   root: projectRoot,
+  base,
   plugins: [
     react(),
     VitePWA({
@@ -21,17 +28,17 @@ export default defineConfig({
         background_color: '#f5f7fb',
         display: 'standalone',
         orientation: 'portrait',
-        start_url: '/',
-        scope: '/',
+        start_url: base,
+        scope: base,
         icons: [
           {
-            src: '/pwa-192x192.svg',
+            src: withBase('pwa-192x192.svg'),
             sizes: '192x192',
             type: 'image/svg+xml',
             purpose: 'any maskable',
           },
           {
-            src: '/pwa-512x512.svg',
+            src: withBase('pwa-512x512.svg'),
             sizes: '512x512',
             type: 'image/svg+xml',
             purpose: 'any maskable',
@@ -39,7 +46,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        navigateFallback: '/index.html',
+        navigateFallback: withBase('index.html'),
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/api\.tvmaze\.com\/.*/i,

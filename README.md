@@ -75,9 +75,29 @@ Both providers are normalized into a shared `ShowSearchResult`, so the app can a
 - Capacitor is prepared for Android/iOS with `App`, `Network`, `StatusBar`, and `SplashScreen`.
 - Android back button and network status are accessed through `NativeBridge`.
 
-## Git
+## CI/CD And GitHub Pages
 
-The project is ready for a local Git workflow. Remote repository configuration is intentionally left to the project owner.
+GitHub Actions runs on every push and pull request:
+
+- `lint`, `type-check`, and `test:run` in one step
+- production `build` with `VITE_BASE_PATH=/<repo-name>/`
+
+Deployment to GitHub Pages happens automatically on push to `master`.
+
+Live demo: `https://warlok38.github.io/watch-log-front/`
+
+To verify a production build locally with the same base path:
+
+```bash
+VITE_BASE_PATH=/watch-log-front/ npm run build
+npm run preview
+```
+
+On Windows Git Bash, disable path conversion for that command:
+
+```bash
+MSYS_NO_PATHCONV=1 VITE_BASE_PATH=/watch-log-front/ npm run build
+```
 
 ## Roadmap
 
@@ -90,4 +110,3 @@ The project is ready for a local Git workflow. Remote repository configuration i
 - Push or local reminders for new seasons.
 - Optional cloud sync while keeping account-free local mode.
 - Import/export library backup.
-- CI pipeline for lint, type-check, tests, and build.

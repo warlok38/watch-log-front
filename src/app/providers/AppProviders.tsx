@@ -7,6 +7,7 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BrowserRouter } from 'react-router-dom'
 
+import { getRouterBasename } from '@/shared/config/basePath'
 import '@/shared/i18n'
 
 const queryClient = new QueryClient({
@@ -29,7 +30,7 @@ export function AppProviders({ children }: PropsWithChildren) {
   return (
     <QueryClientProvider client={queryClient}>
       <ConfigProvider locale={locale}>
-        <BrowserRouter>{children}</BrowserRouter>
+        <BrowserRouter basename={getRouterBasename()}>{children}</BrowserRouter>
       </ConfigProvider>
     </QueryClientProvider>
   )

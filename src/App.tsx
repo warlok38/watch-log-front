@@ -2,6 +2,8 @@ import { Suspense, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { AppRouter } from '@/app/router/AppRouter'
+import { getRouterBasename } from '@/shared/config/basePath'
+import { routes } from '@/shared/config/routes'
 import { nativeBridge, setupNativeUi } from '@/shared/native'
 import type { NativeUnsubscribe } from '@/shared/native'
 import { subscribeToResolvedThemeChange } from '@/shared/theme'
@@ -19,7 +21,14 @@ function App() {
     })
     void nativeBridge
       .onBackButton(() => {
-        if (window.location.pathname === '/') return
+        const basename = getRouterBasename()
+        const pathname = window.location.pathname
+        const relativePath =
+          basename && pathname.startsWith(basename)
+            ? pathname.slice(basename.length) || routes.home
+            : pathname
+
+        if (relativePath === routes.home) return
         navigate(-1)
       })
       .then((cleanup) => {
