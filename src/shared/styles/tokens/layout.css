@@ -1,0 +1,6 @@
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --layout-mobile-max-width: 520px;
+  --layout-tabbar-height: 80px;
+}

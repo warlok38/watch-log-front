@@ -18,6 +18,7 @@ WatchLog is a mobile-first personal diary for tracking watched series and anime 
 - Dexie and IndexedDB for local diary data
 - i18next and react-i18next for `ru/en`
 - Ant Design Mobile for mobile UI
+- CSS Modules and classnames for component styles
 - vite-plugin-pwa for manifest and service worker
 - Capacitor for Android/iOS WebView shell
 - Vitest and Testing Library for checks
@@ -45,6 +46,14 @@ src/
 ```
 
 The app keeps native integration behind `NativeBridge`. React screens call a small interface instead of using Capacitor directly, so web/PWA and native runtime stay interchangeable.
+
+## Styling And Theme
+
+Styling is CSS-first. Design tokens live in `src/shared/styles/tokens/` and are grouped by palette, semantic colors, spacing, radius, shadows, layout, and Ant Design Mobile variable mapping.
+
+`src/index.css` is intentionally small: it imports tokens and keeps only global reset and base document styles. Component and page styles should live next to their React components as `*.module.css`. Use `classnames` when a component needs conditional CSS Module classes.
+
+The app theme supports `system`, `light`, and `dark` modes through `src/shared/theme`. The resolved theme is applied to `document.documentElement.dataset.theme`, updates the PWA `theme-color` meta tag, and drives the Capacitor status bar style.
 
 ## Data Model
 

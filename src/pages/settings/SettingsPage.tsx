@@ -8,6 +8,8 @@ import { nativeBridge } from '@/shared/native'
 import type { NativeUnsubscribe } from '@/shared/native'
 import { PageHeader } from '@/shared/ui'
 
+import styles from './SettingsPage.module.css'
+
 export function SettingsPage() {
   const { t } = useTranslation()
   const [isOnline, setIsOnline] = useState(navigator.onLine)
@@ -28,7 +30,7 @@ export function SettingsPage() {
   }, [])
 
   return (
-    <section className="page">
+    <section className={styles.page}>
       <PageHeader title={t('settings.title')} />
       <Card title={t('settings.language')}>
         <LanguageSwitcher />

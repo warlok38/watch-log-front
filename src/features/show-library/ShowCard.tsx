@@ -7,6 +7,8 @@ import { routes } from '@/shared/config/routes'
 import { markEpisode } from '@/shared/db'
 import { ShowPoster } from '@/shared/ui'
 
+import styles from './ShowCard.module.css'
+
 type ShowCardProps = {
   show: Show
   watchedEpisodes: number
@@ -25,22 +27,22 @@ export function ShowCard({ show, watchedEpisodes, totalEpisodes }: ShowCardProps
   }
 
   return (
-    <Card className="show-card" onClick={() => navigate(routes.showDetails(show.id))}>
-      <div className="show-card__layout">
+    <Card className={styles.card} onClick={() => navigate(routes.showDetails(show.id))}>
+      <div className={styles.layout}>
         <ShowPoster src={show.posterUrl} title={show.title} />
-        <div className="show-card__body">
-          <div className="show-card__title-row">
+        <div className={styles.body}>
+          <div className={styles.titleRow}>
             <h3>{show.title}</h3>
             <Tag color={show.kind === 'anime' ? 'purple' : 'primary'}>{t(`kind.${show.kind}`)}</Tag>
           </div>
-          <div className="show-card__tags">
+          <div className={styles.tags}>
             <Tag color="success">{t(`status.${show.status}`)}</Tag>
             <Tag>{t(`externalStatus.${show.externalStatus}`)}</Tag>
           </div>
           <p>{t('home.progress', { season: show.currentSeason, episode: show.currentEpisode })}</p>
           <ProgressBar percent={progress} />
           <Button
-            className="quick-mark-button"
+            className={styles.quickMarkButton}
             size="small"
             color="primary"
             fill="solid"

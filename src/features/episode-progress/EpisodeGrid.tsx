@@ -1,8 +1,11 @@
 import { Button, Grid, Toast } from 'antd-mobile'
+import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 
 import type { Episode } from '@/entities/episode'
 import { markRange, markSeason, toggleEpisodeWatched } from '@/shared/db'
+
+import styles from './EpisodeGrid.module.css'
 
 type EpisodeGridProps = {
   showId: string
@@ -29,16 +32,16 @@ export function EpisodeGrid({ showId, seasonNumber, episodes, showHeader = true 
   }
 
   return (
-    <section className="season-block">
+    <section className={styles.seasonBlock}>
       {showHeader ? (
-        <div className="season-block__header">
+        <div className={styles.header}>
           <h2>{t('details.season', { season: seasonNumber })}</h2>
           <Button size="mini" onClick={() => void markSeason(showId, seasonNumber)}>
             {t('details.markSeason')}
           </Button>
         </div>
       ) : (
-        <div className="season-block__actions">
+        <div className={styles.actions}>
           <Button size="mini" onClick={() => void markSeason(showId, seasonNumber)}>
             {t('details.markSeason')}
           </Button>
@@ -50,10 +53,10 @@ export function EpisodeGrid({ showId, seasonNumber, episodes, showHeader = true 
 
           return (
             <Grid.Item key={episode.id}>
-              <div className="episode-cell">
+              <div className={styles.episodeCell}>
                 <Button
                   block
-                  className={isFutureEpisode ? 'episode-button--future' : undefined}
+                  className={classNames({ [styles.futureButton]: isFutureEpisode })}
                   size="small"
                   color={episode.watched ? 'primary' : 'default'}
                   fill={episode.watched ? 'solid' : 'outline'}
@@ -70,7 +73,7 @@ export function EpisodeGrid({ showId, seasonNumber, episodes, showHeader = true 
                   E{episode.episodeNumber}
                 </Button>
                 {isFutureEpisode && episode.airDate && (
-                  <span className="episode-air-date">{formatAirDate(episode.airDate)}</span>
+                  <span className={styles.airDate}>{formatAirDate(episode.airDate)}</span>
                 )}
                 <Button
                   block
@@ -92,7 +95,7 @@ export function EpisodeGrid({ showId, seasonNumber, episodes, showHeader = true 
           )
         })}
       </Grid>
-      <p className="hint">{t('details.markRange')}</p>
+      <p className={styles.hint}>{t('details.markRange')}</p>
     </section>
   )
 }

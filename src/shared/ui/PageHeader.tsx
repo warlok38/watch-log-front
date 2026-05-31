@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react'
 
+import styles from './PageHeader.module.css'
+
 type PageHeaderProps = {
   title: string
   subtitle?: string
@@ -8,10 +10,10 @@ type PageHeaderProps = {
 
 export function PageHeader({ title, subtitle, action }: PageHeaderProps) {
   return (
-    <header className="page-header">
+    <header className={styles.header}>
       <div>
         <h1>{title}</h1>
-        {subtitle && <p>{subtitle}</p>}
+        {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
       </div>
       {action}
     </header>

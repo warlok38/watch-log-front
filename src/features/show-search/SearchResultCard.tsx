@@ -8,6 +8,8 @@ import { routes } from '@/shared/config/routes'
 import { addShow } from '@/shared/db'
 import { ShowPoster } from '@/shared/ui'
 
+import styles from '@/features/show-library/ShowCard.module.css'
+
 type SearchResultCardProps = {
   result: ShowSearchResult
 }
@@ -32,11 +34,11 @@ export function SearchResultCard({ result }: SearchResultCardProps) {
   }
 
   return (
-    <Card className="show-card">
-      <div className="show-card__layout">
+    <Card className={styles.card}>
+      <div className={styles.layout}>
         <ShowPoster src={result.posterUrl} title={result.title} />
-        <div className="show-card__body">
-          <div className="show-card__title-row">
+        <div className={styles.body}>
+          <div className={styles.titleRow}>
             <h3>{result.title}</h3>
             <Tag color={result.kind === 'anime' ? 'purple' : 'primary'}>{t(`kind.${result.kind}`)}</Tag>
           </div>

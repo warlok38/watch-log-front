@@ -1,0 +1,203 @@
+.shell {
+  position: relative;
+  max-width: var(--layout-mobile-max-width);
+  min-height: 100svh;
+  margin: 0 auto;
+  border-inline: 1px solid var(--border);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--bg-accent) 54%, transparent), transparent 16rem),
+    var(--bg);
+}
+
+.content {
+  min-height: 100svh;
+  padding-bottom: calc(var(--layout-tabbar-height) + var(--safe-bottom));
+}
+
+.tabs {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  max-width: var(--layout-mobile-max-width);
+  margin: 0 auto;
+  border-top: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  box-shadow: 0 -12px 32px rgb(34 48 76 / 8%);
+  backdrop-filter: blur(20px);
+}
+
+.shell :global(.adm-tab-bar) {
+  color: var(--muted);
+}
+
+.shell :global(.adm-tab-bar-item-active) {
+  color: var(--primary);
+}
+
+.shell :global(.adm-tab-bar-item-icon) {
+  font-size: 22px;
+}
+
+.shell :global(.adm-card) {
+  border: 1px solid color-mix(in srgb, var(--border) 62%, transparent);
+  border-radius: var(--radius);
+  background: var(--surface-elevated);
+  color: var(--text);
+  box-shadow: var(--shadow-soft);
+}
+
+.shell :global(.adm-card-header) {
+  border-color: var(--border);
+}
+
+.shell :global(.adm-card-header-title) {
+  color: var(--text);
+}
+
+.shell :global(.adm-card-body) {
+  padding: 14px;
+  color: var(--text);
+}
+
+.shell :global(.adm-button) {
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.shell :global(.adm-button:not(.adm-button-fill-none)) {
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--primary) 16%, transparent);
+}
+
+.shell :global(.adm-button-fill-outline) {
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+}
+
+.shell :global(.adm-button-primary) {
+  --color: var(--primary);
+}
+
+.shell :global(.adm-tag) {
+  --background-color: var(--tag-default-bg) !important;
+  --border-color: var(--tag-default-border) !important;
+  --text-color: var(--tag-default-text) !important;
+  border-radius: 7px;
+  font-weight: 650;
+}
+
+.shell :global(.adm-tag[style*='--adm-color-primary']) {
+  --background-color: var(--tag-primary-bg) !important;
+  --border-color: var(--tag-primary-border) !important;
+  --text-color: var(--tag-primary-text) !important;
+}
+
+.shell :global(.adm-tag[style*='--adm-color-success']) {
+  --background-color: var(--tag-success-bg) !important;
+  --border-color: var(--tag-success-border) !important;
+  --text-color: var(--tag-success-text) !important;
+}
+
+.shell :global(.adm-tag[style*='--adm-color-warning']) {
+  --background-color: var(--tag-warning-bg) !important;
+  --border-color: var(--tag-warning-border) !important;
+  --text-color: var(--tag-warning-text) !important;
+}
+
+.shell :global(.adm-tag[style*='--adm-color-danger']) {
+  --background-color: var(--tag-danger-bg) !important;
+  --border-color: var(--tag-danger-border) !important;
+  --text-color: var(--tag-danger-text) !important;
+}
+
+.shell :global(.adm-capsule-tabs-header) {
+  margin: 0 -14px;
+  padding: 0 14px;
+  border: 0;
+}
+
+.shell :global(.adm-capsule-tabs-tab-list) {
+  gap: 8px;
+}
+
+.shell :global(.adm-capsule-tabs-tab) {
+  border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  color: var(--muted);
+  font-weight: 650;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 30%);
+}
+
+.shell :global(.adm-capsule-tabs-tab-active) {
+  background: var(--primary);
+  color: #fff;
+}
+
+.shell :global(.adm-selector) {
+  --color: color-mix(in srgb, var(--surface) 84%, transparent);
+  --checked-color: var(--primary-soft);
+  --text-color: var(--text);
+  --checked-text-color: var(--primary);
+  --border: 1px solid var(--border);
+  --checked-border: 1px solid var(--primary);
+  --border-radius: var(--radius-xs);
+}
+
+.shell :global(.adm-selector-item) {
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 84%, transparent);
+  color: var(--text);
+}
+
+.shell :global(.adm-selector-item-active) {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.shell :global(.adm-progress-bar) {
+  --track-width: 6px;
+  --track-color: color-mix(in srgb, var(--border) 65%, transparent);
+  --fill-color: var(--primary);
+}
+
+.shell :global(.adm-search-bar) {
+  --height: 48px;
+  --border-radius: 16px;
+  padding: 0;
+}
+
+.shell :global(.adm-search-bar-input-box),
+.shell :global(.adm-form),
+.shell :global(.adm-list),
+.shell :global(.adm-collapse),
+:global(.adm-dialog-body),
+:global(.adm-toast-main) {
+  background: var(--surface-elevated);
+  color: var(--text);
+}
+
+.shell :global(.adm-search-bar-input-box) {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface-elevated);
+  color: var(--text);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 25%);
+}
+
+.shell :global(.adm-search-bar-input-box input) {
+  color: var(--text);
+  font-size: 15px;
+}
+
+.shell :global(.adm-search-bar-input-box input::placeholder) {
+  color: color-mix(in srgb, var(--muted) 72%, transparent);
+}
+
+.shell :global(.adm-list-item) {
+  background: transparent;
+}
+
+.shell :global(.adm-list-item-content) {
+  border-color: var(--border);
+}

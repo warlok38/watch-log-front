@@ -6,6 +6,8 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 import { routes } from '@/shared/config/routes'
 
+import styles from './AppShell.module.css'
+
 const tabs = [
   { key: routes.home, icon: <AppOutline />, labelKey: 'nav.library' },
   { key: routes.search, icon: <AddOutline />, labelKey: 'nav.add' },
@@ -19,9 +21,9 @@ export function AppShell({ children }: PropsWithChildren) {
   const activeKey = location.pathname
 
   return (
-    <div className="app-shell">
-      <main className="app-shell__content">{children}</main>
-      <footer className="app-shell__tabs">
+    <div className={styles.shell}>
+      <main className={styles.content}>{children}</main>
+      <footer className={styles.tabs}>
         <TabBar activeKey={activeKey} onChange={(key) => navigate(key)}>
           {tabs.map((tab) => (
             <TabBar.Item key={tab.key} icon={tab.icon} title={t(tab.labelKey)} />

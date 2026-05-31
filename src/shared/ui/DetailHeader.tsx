@@ -1,5 +1,8 @@
 import { Button } from 'antd-mobile'
 import { LeftOutline, MoreOutline } from 'antd-mobile-icons'
+import classNames from 'classnames'
+
+import styles from './DetailHeader.module.css'
 
 type DetailHeaderProps = {
   title: string
@@ -21,16 +24,16 @@ export function DetailHeader({
   onMenuClick,
 }: DetailHeaderProps) {
   return (
-    <header className={`detail-header${hidden ? ' detail-header--hidden' : ''}`}>
-      <button className="detail-header__back" type="button" onClick={onBack}>
+    <header className={classNames(styles.header, { [styles.hidden]: hidden })}>
+      <button className={styles.back} type="button" onClick={onBack}>
         <LeftOutline />
         <span>{backLabel}</span>
       </button>
-      <div className="detail-header__title">
+      <div className={styles.title}>
         <h1>{title}</h1>
         {subtitle && <p>{subtitle}</p>}
       </div>
-      <Button className="detail-header__button" fill="none" aria-label={menuLabel} onClick={onMenuClick}>
+      <Button className={styles.button} fill="none" aria-label={menuLabel} onClick={onMenuClick}>
         <MoreOutline />
       </Button>
     </header>

@@ -1,0 +1,75 @@
+:root {
+  color-scheme: light;
+
+  --palette-blue-50: #e9edff;
+  --palette-blue-100: #cfd6ff;
+  --palette-blue-500: #5867d8;
+  --palette-blue-600: #4552bd;
+  --palette-blue-700: #4f5fc4;
+
+  --palette-green-50: #eaf7ef;
+  --palette-green-100: #c7e7d2;
+  --palette-green-500: #4fa36c;
+  --palette-green-700: #2f8a50;
+
+  --palette-yellow-50: #fff5df;
+  --palette-yellow-100: #efdba8;
+  --palette-yellow-500: #d59c2f;
+  --palette-yellow-700: #9b6a12;
+
+  --palette-red-50: #fff0f1;
+  --palette-red-100: #f0c8cd;
+  --palette-red-500: #d85b64;
+  --palette-red-700: #b54850;
+
+  --palette-slate-50: #f5f8fc;
+  --palette-slate-100: #eef3f9;
+  --palette-slate-150: #e8eef8;
+  --palette-slate-200: #dce5f0;
+  --palette-slate-300: #dce5ef;
+  --palette-slate-500: #6f7c91;
+  --palette-slate-600: #64748b;
+  --palette-slate-900: #172033;
+  --palette-white: #ffffff;
+
+  --palette-shadow-strong: 0 18px 50px rgb(58 79 130 / 10%);
+  --palette-shadow-soft: 0 10px 30px rgb(34 48 76 / 7%);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --palette-blue-50: #202b4d;
+  --palette-blue-100: #3b4776;
+  --palette-blue-500: #9aa8ff;
+  --palette-blue-600: #b6c0ff;
+  --palette-blue-700: #b7c0ff;
+
+  --palette-green-50: #1c382b;
+  --palette-green-100: #315b42;
+  --palette-green-500: #75c58c;
+  --palette-green-700: #9bd9aa;
+
+  --palette-yellow-50: #3e3320;
+  --palette-yellow-100: #5f4b2a;
+  --palette-yellow-500: #e2b456;
+  --palette-yellow-700: #f0cd7c;
+
+  --palette-red-50: #44252c;
+  --palette-red-100: #683841;
+  --palette-red-500: #ff858d;
+  --palette-red-700: #ffb0b6;
+
+  --palette-slate-50: #0d1422;
+  --palette-slate-100: #1b263a;
+  --palette-slate-150: #18233a;
+  --palette-slate-200: #2a3850;
+  --palette-slate-300: #314056;
+  --palette-slate-500: #9aa8bd;
+  --palette-slate-600: #a8b4c7;
+  --palette-slate-900: #eef4ff;
+  --palette-white: #172238;
+
+  --palette-shadow-strong: 0 18px 60px rgb(0 0 0 / 34%);
+  --palette-shadow-soft: 0 10px 36px rgb(0 0 0 / 24%);
+}

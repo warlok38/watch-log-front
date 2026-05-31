@@ -1,5 +1,6 @@
 import { Button, SearchBar } from 'antd-mobile'
 import { AppstoreOutline, CloseOutline, SearchOutline, UnorderedListOutline } from 'antd-mobile-icons'
+import classNames from 'classnames'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -9,6 +10,8 @@ import { useAppStore } from '@/app/providers/useAppStore'
 import { ShowCard, ShowListRow, StatusFilter } from '@/features/show-library'
 import { routes } from '@/shared/config/routes'
 import { db } from '@/shared/db'
+
+import styles from './HomePage.module.css'
 
 export function HomePage() {
   const { t } = useTranslation()
@@ -35,12 +38,12 @@ export function HomePage() {
   const isListView = libraryView === 'list'
 
   return (
-    <section className="page home-page">
-      <div className="library-toolbar">
-        <div className="library-view-switch" aria-label={t('home.viewToggle')}>
+    <section className={styles.page}>
+      <div className={styles.toolbar}>
+        <div className={styles.viewSwitch} aria-label={t('home.viewToggle')}>
           <button
             aria-label={t('home.cardsView')}
-            className={libraryView === 'cards' ? 'library-view-switch__button is-active' : 'library-view-switch__button'}
+            className={classNames(styles.viewButton, { [styles.active]: libraryView === 'cards' })}
             type="button"
             onClick={() => setLibraryView('cards')}
           >
@@ -48,7 +51,7 @@ export function HomePage() {
           </button>
           <button
             aria-label={t('home.listView')}
-            className={libraryView === 'list' ? 'library-view-switch__button is-active' : 'library-view-switch__button'}
+            className={classNames(styles.viewButton, { [styles.active]: libraryView === 'list' })}
             type="button"
             onClick={() => setLibraryView('list')}
           >
@@ -57,7 +60,7 @@ export function HomePage() {
         </div>
         <button
           aria-label={isSearchOpen ? t('common.cancel') : t('home.librarySearch')}
-          className={isSearchOpen ? 'library-search-button is-active' : 'library-search-button'}
+          className={classNames(styles.searchButton, { [styles.active]: isSearchOpen })}
           type="button"
           onClick={() => {
             if (isSearchOpen) {
@@ -71,7 +74,7 @@ export function HomePage() {
       </div>
 
       {isSearchOpen && (
-        <div className="library-search-panel">
+        <div className={styles.searchPanel}>
           <SearchBar
             autoFocus
             placeholder={t('home.librarySearchPlaceholder')}
@@ -84,7 +87,7 @@ export function HomePage() {
       <StatusFilter />
 
       {!filteredShows?.length ? (
-        <div className="empty-state">
+        <div className={styles.emptyState}>
           <strong>{hasShows ? t('home.emptySearchTitle') : t('home.emptyTitle')}</strong>
           <p>{hasShows ? t('home.emptySearchDescription') : t('home.emptyDescription')}</p>
           {!hasShows && (
@@ -94,7 +97,7 @@ export function HomePage() {
           )}
         </div>
       ) : (
-        <div className={isListView ? 'show-list show-list--rows' : 'show-list'}>
+        <div className={classNames(styles.showList, { [styles.rowList]: isListView })}>
           {filteredShows.map((show) => {
             const showEpisodes = episodes?.filter((episode) => episode.showId === show.id) ?? []
             const watchedEpisodes = showEpisodes.filter((episode) => episode.watched).length

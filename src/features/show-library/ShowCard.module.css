@@ -1,0 +1,48 @@
+.card {
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--border) 68%, transparent);
+  border-radius: var(--radius);
+  background: var(--surface-elevated);
+  box-shadow: var(--shadow-soft);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  gap: 14px;
+}
+
+.body {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.titleRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.titleRow h3 {
+  overflow: hidden;
+  font-size: 16px;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.quickMarkButton {
+  --color: var(--primary);
+  align-self: flex-start;
+  min-width: 76px;
+  border-radius: var(--radius-xs);
+  box-shadow: 0 8px 16px rgb(88 103 216 / 18%);
+}

@@ -8,6 +8,8 @@ import { SearchResultCard } from '@/features/show-search'
 import { searchShows } from '@/shared/api'
 import { PageHeader } from '@/shared/ui'
 
+import styles from './SearchPage.module.css'
+
 const SEARCH_DEBOUNCE_MS = 500
 
 export function SearchPage() {
@@ -24,24 +26,24 @@ export function SearchPage() {
   const canShowSearchState = normalizedQuery === debouncedQuery && debouncedQuery.length > 1
 
   return (
-    <section className="page add-page">
+    <section className={styles.page}>
       <PageHeader title={t('search.title')} subtitle={t('search.subtitle')} />
-      <div className="add-search-panel">
+      <div className={styles.searchPanel}>
         <SearchBar placeholder={t('search.placeholder')} value={query} onChange={setQuery} />
       </div>
 
-      <Collapse className="manual-collapse">
+      <Collapse className={styles.manualCollapse}>
         <Collapse.Panel key="manual" title={t('search.addManual')}>
           <ManualShowForm />
         </Collapse.Panel>
       </Collapse>
 
-      {(isWaitingForDebounce || isFetching) && <SpinLoading className="center-loader" />}
+      {(isWaitingForDebounce || isFetching) && <SpinLoading className={styles.centerLoader} />}
       {isError && <ErrorBlock status="default" />}
       {canShowSearchState && !isFetching && !data?.length && (
-        <Empty className="empty-state" description={t('search.nothing')} />
+        <Empty className={styles.emptyState} description={t('search.nothing')} />
       )}
-      <div className="show-list">
+      <div className={styles.showList}>
         {canShowSearchState &&
           data?.map((result) => (
             <SearchResultCard

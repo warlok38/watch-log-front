@@ -1,0 +1,32 @@
+:root {
+  --adm-color-primary: var(--primary);
+  --adm-color-success: var(--success);
+  --adm-color-warning: var(--warning);
+  --adm-color-danger: var(--danger);
+  --adm-color-text: var(--text);
+  --adm-color-text-secondary: var(--muted);
+  --adm-color-weak: var(--muted);
+  --adm-color-light: var(--surface-muted);
+  --adm-color-border: var(--border);
+  --adm-color-background: var(--bg);
+  --adm-color-background-body: var(--bg);
+  --adm-color-white: var(--surface);
+  --adm-color-box: var(--surface-muted);
+  --adm-color-fill-content: var(--adm-color-box);
+  --adm-color-wathet: var(--primary-soft);
+  --adm-color-text-light-solid: #ffffff;
+  --adm-color-text-dark-solid: var(--text);
+  --adm-border-color: var(--border);
+  --adm-border-radius-s: var(--radius-xs);
+  --adm-border-radius-m: 14px;
+  --adm-border-radius-l: var(--radius);
+  --adm-font-size-main: 16px;
+  --adm-font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --adm-box-shadow: var(--shadow-soft);
+}
+
+:root[data-theme='dark'] {
+  --adm-color-background: var(--surface);
+  --adm-color-white: var(--surface-elevated);
+  --adm-color-fill-content: var(--surface-muted);
+}

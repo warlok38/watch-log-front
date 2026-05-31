@@ -4,6 +4,8 @@ import { Network } from '@capacitor/network'
 import { SplashScreen } from '@capacitor/splash-screen'
 import { StatusBar, Style } from '@capacitor/status-bar'
 
+import { THEME_COLOR_BY_MODE, type ResolvedThemeMode } from '@/shared/theme'
+
 import type { NativeBridge, NativePlatform } from './types'
 
 function getPlatform(): NativePlatform {
@@ -14,10 +16,11 @@ function getPlatform(): NativePlatform {
   return 'web'
 }
 
-export async function setupNativeUi(): Promise<void> {
+export async function setupNativeUi(themeMode: ResolvedThemeMode = 'light'): Promise<void> {
   if (!Capacitor.isNativePlatform()) return
 
-  await StatusBar.setStyle({ style: Style.Light })
+  await StatusBar.setStyle({ style: themeMode === 'dark' ? Style.Light : Style.Dark })
+  await StatusBar.setBackgroundColor({ color: THEME_COLOR_BY_MODE[themeMode] })
   await SplashScreen.hide()
 }
 

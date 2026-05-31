@@ -1,0 +1,109 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: calc(18px + var(--safe-top)) 14px 22px;
+}
+
+.hint {
+  font-size: 12px;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface-elevated) 94%, var(--primary-soft));
+  box-shadow: var(--shadow-soft);
+}
+
+.heroPoster {
+  width: 96px;
+  height: 136px;
+}
+
+.heroBody {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.nextEpisodeCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid color-mix(in srgb, var(--primary) 28%, var(--border));
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--primary-soft) 82%, transparent), transparent 72%),
+    var(--surface-elevated);
+  box-shadow: 0 14px 34px color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
+.nextEpisodeCard h2 {
+  font-size: 18px;
+}
+
+.nextEpisodeCard p {
+  margin-top: 4px;
+  font-size: 13px;
+}
+
+.seasonCollapse {
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface-elevated) 94%, transparent);
+  box-shadow: var(--shadow-soft);
+}
+
+.seasonCollapse :global(.adm-list-item) {
+  background: transparent;
+}
+
+.seasonCollapse :global(.adm-list-item-content) {
+  border-color: var(--border);
+}
+
+.seasonCollapse :global(.adm-collapse-panel-content) {
+  background: transparent;
+}
+
+.seasonCollapse :global(.adm-collapse-panel-content-inner) {
+  padding: 0;
+}
+
+.seasonCollapse :global(.adm-collapse-panel-content-inner > section) {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.seasonPanelTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.seasonPanelProgress {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+}

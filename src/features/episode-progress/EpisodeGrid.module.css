@@ -1,0 +1,44 @@
+.seasonBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface-elevated) 94%, transparent);
+  box-shadow: var(--shadow-soft);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.episodeCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.futureButton {
+  opacity: 0.58;
+  box-shadow: none;
+}
+
+.airDate {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.hint {
+  font-size: 12px;
+}

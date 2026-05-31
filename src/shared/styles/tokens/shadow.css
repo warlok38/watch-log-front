@@ -1,0 +1,4 @@
+:root {
+  --shadow: var(--palette-shadow-strong);
+  --shadow-soft: var(--palette-shadow-soft);
+}

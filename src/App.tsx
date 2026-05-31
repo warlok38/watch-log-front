@@ -3,22 +3,38 @@ import { useNavigate } from 'react-router-dom'
 
 import { AppRouter } from '@/app/router/AppRouter'
 import { nativeBridge, setupNativeUi } from '@/shared/native'
+import type { NativeUnsubscribe } from '@/shared/native'
+import { subscribeToResolvedThemeChange } from '@/shared/theme'
 import { AppShell } from '@/shared/ui'
+
+import styles from './App.module.css'
 
 function App() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    void setupNativeUi()
-    void nativeBridge.onBackButton(() => {
-      if (window.location.pathname === '/') return
-      navigate(-1)
+    let unsubscribeBackButton: NativeUnsubscribe | undefined
+    const unsubscribeTheme = subscribeToResolvedThemeChange((themeMode) => {
+      void setupNativeUi(themeMode)
     })
+    void nativeBridge
+      .onBackButton(() => {
+        if (window.location.pathname === '/') return
+        navigate(-1)
+      })
+      .then((cleanup) => {
+        unsubscribeBackButton = cleanup
+      })
+
+    return () => {
+      unsubscribeTheme()
+      unsubscribeBackButton?.()
+    }
   }, [navigate])
 
   return (
     <AppShell>
-      <Suspense fallback={<section className="page" />}>
+      <Suspense fallback={<section className={styles.fallbackPage} />}>
         <AppRouter />
       </Suspense>
     </AppShell>

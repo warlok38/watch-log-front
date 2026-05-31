@@ -10,6 +10,8 @@ import { routes } from '@/shared/config/routes'
 import { db, deleteShow, markEpisode, refreshShowProgress, updateShowArchived } from '@/shared/db'
 import { DetailHeader, ShowPoster } from '@/shared/ui'
 
+import styles from './ShowDetailsPage.module.css'
+
 const HEADER_SCROLL_THRESHOLD = 14
 const HEADER_TOP_OFFSET = 24
 
@@ -36,7 +38,7 @@ export function ShowDetailsPage() {
   }
 
   if (!show) {
-    return <section className="page" />
+    return <section className={styles.page} />
   }
 
   const sortedEpisodes =
@@ -117,7 +119,7 @@ export function ShowDetailsPage() {
   const locationState = location.state as { fromAdd?: boolean } | null
 
   return (
-    <section className="page">
+    <section className={styles.page}>
       <DetailHeader
         title={show.title}
         subtitle={t('home.progress', {
@@ -131,12 +133,12 @@ export function ShowDetailsPage() {
         onMenuClick={handleMenuClick}
       />
 
-      {locationState?.fromAdd && <p className="hint">{t('details.afterAddHint')}</p>}
+      {locationState?.fromAdd && <p className={styles.hint}>{t('details.afterAddHint')}</p>}
 
-      <div className="details-hero">
-        <ShowPoster src={show.posterUrl} title={show.title} />
-        <div className="details-hero__body">
-          <div className="show-card__tags">
+      <div className={styles.hero}>
+        <ShowPoster className={styles.heroPoster} src={show.posterUrl} title={show.title} />
+        <div className={styles.heroBody}>
+          <div className={styles.tags}>
             <Tag color="success">{t(`status.${show.status}`)}</Tag>
             <Tag>{t(`externalStatus.${show.externalStatus}`)}</Tag>
           </div>
@@ -144,7 +146,7 @@ export function ShowDetailsPage() {
         </div>
       </div>
 
-      <section className="next-episode-card">
+      <section className={styles.nextEpisodeCard}>
         {nextAvailableEpisode ? (
           <>
             <div>
@@ -195,7 +197,7 @@ export function ShowDetailsPage() {
       {seasonEntries.length > 1 ? (
         <Collapse
           key={`${show.id}-${activeSeasonNumber}`}
-          className="season-collapse"
+          className={styles.seasonCollapse}
           accordion
           defaultActiveKey={String(activeSeasonNumber)}
         >
@@ -251,9 +253,9 @@ function SeasonPanelTitle({
   const watchedEpisodes = episodes.filter((episode) => episode.watched).length
 
   return (
-    <div className="season-panel-title">
+    <div className={styles.seasonPanelTitle}>
       <span>{label}</span>
-      <span className="season-panel-title__progress">
+      <span className={styles.seasonPanelProgress}>
         {watchedEpisodes}/{episodes.length}
       </span>
     </div>

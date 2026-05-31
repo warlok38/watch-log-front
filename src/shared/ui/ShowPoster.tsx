@@ -1,12 +1,17 @@
+import classNames from 'classnames'
+
+import styles from './ShowPoster.module.css'
+
 type ShowPosterProps = {
   src?: string
   title: string
+  className?: string
 }
 
-export function ShowPoster({ src, title }: ShowPosterProps) {
+export function ShowPoster({ src, title, className }: ShowPosterProps) {
   if (src) {
-    return <img className="show-poster" src={src} alt={title} loading="lazy" />
+    return <img className={classNames(styles.poster, className)} src={src} alt={title} loading="lazy" />
   }
 
-  return <div className="show-poster show-poster--fallback">{title.slice(0, 1).toUpperCase()}</div>
+  return <div className={classNames(styles.poster, styles.fallback, className)}>{title.slice(0, 1).toUpperCase()}</div>
 }
