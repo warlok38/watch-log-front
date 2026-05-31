@@ -72,6 +72,9 @@ The project is ready for a local Git workflow. Remote repository configuration i
 
 ## Roadmap
 
+- Group the library by watching state: watching, waiting for a new season, planned, completed, and archive.
+- Continue UX research across Showly, SeriesGuide, Trakt, TV Time, and EpisodeKit for faster add and episode-marking flows.
+- Add an "up next" queue, release calendar, and richer episode metadata.
 - Better episode metadata sync from providers.
 - Push or local reminders for new seasons.
 - Optional cloud sync while keeping account-free local mode.
