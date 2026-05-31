@@ -14,6 +14,14 @@ function nowIso(): string {
   return new Date().toISOString()
 }
 
+function isEpisodeReleased(episode: { airDate?: string }): boolean {
+  if (!episode.airDate) return true
+
+  const airTime = new Date(episode.airDate).getTime()
+
+  return Number.isNaN(airTime) || airTime <= Date.now()
+}
+
 export async function addShow(draft: ShowDraft): Promise<string> {
   const createdAt = nowIso()
   const existingShow =
@@ -65,6 +73,10 @@ export async function updateShowArchived(showId: string, isArchived: boolean): P
   })
 }
 
+export async function refreshShowProgress(showId: string): Promise<void> {
+  await updateShowProgress(showId, nowIso())
+}
+
 export async function deleteShow(showId: string): Promise<void> {
   await db.transaction('rw', db.shows, db.episodes, db.watchEvents, async () => {
     await db.shows.delete(showId)
@@ -75,6 +87,12 @@ export async function deleteShow(showId: string): Promise<void> {
 
 export async function markEpisode(showId: string, seasonNumber: number, episodeNumber: number): Promise<void> {
   const watchedAt = nowIso()
+  const episode = await db.episodes
+    .where('[showId+seasonNumber+episodeNumber]')
+    .equals([showId, seasonNumber, episodeNumber])
+    .first()
+
+  if (!episode || !isEpisodeReleased(episode)) return
 
   await db.transaction('rw', db.episodes, db.shows, db.watchEvents, async () => {
     await db.episodes
@@ -97,6 +115,7 @@ export async function toggleEpisodeWatched(
     .first()
 
   if (!episode) return
+  if (!isEpisodeReleased(episode) && !episode.watched) return
 
   const watched = !episode.watched
   const changedAt = nowIso()
@@ -121,7 +140,8 @@ export async function markSeason(showId: string, seasonNumber: number): Promise<
     .where('[showId+seasonNumber+episodeNumber]')
     .between([showId, seasonNumber, Dexie.minKey], [showId, seasonNumber, Dexie.maxKey])
     .toArray()
-  const lastEpisode = Math.max(...episodes.map((episode) => episode.episodeNumber), 0)
+  const releasedEpisodes = episodes.filter(isEpisodeReleased)
+  const lastEpisode = Math.max(...releasedEpisodes.map((episode) => episode.episodeNumber), 0)
 
   if (lastEpisode > 0) {
     await markRange(showId, seasonNumber, lastEpisode, 'season-marked')
@@ -138,6 +158,7 @@ export async function markRange(
   const episodes = await db.episodes.where('showId').equals(showId).toArray()
   const updates = episodes
     .filter((episode) => {
+      if (!isEpisodeReleased(episode)) return false
       if (episode.seasonNumber < toSeasonNumber) return true
       return episode.seasonNumber === toSeasonNumber && episode.episodeNumber <= toEpisodeNumber
     })
@@ -164,8 +185,9 @@ async function updateShowProgress(showId: string, updatedAt: string): Promise<vo
 
   if (!show) return
 
-  const watchedEpisodes = episodes.filter((episode) => episode.watched)
-  const lastWatchedEpisode = watchedEpisodes.toSorted((left, right) => {
+  const releasedEpisodes = episodes.filter(isEpisodeReleased)
+  const watchedReleasedEpisodes = releasedEpisodes.filter((episode) => episode.watched)
+  const lastWatchedEpisode = watchedReleasedEpisodes.toSorted((left, right) => {
     if (left.seasonNumber !== right.seasonNumber) {
       return right.seasonNumber - left.seasonNumber
     }
@@ -173,20 +195,41 @@ async function updateShowProgress(showId: string, updatedAt: string): Promise<vo
     return right.episodeNumber - left.episodeNumber
   })[0]
 
+  const nextStatus = getAutomaticStatus(show, watchedReleasedEpisodes.length, releasedEpisodes.length, episodes.length)
+  const nextSeason = lastWatchedEpisode?.seasonNumber ?? 1
+  const nextEpisode = lastWatchedEpisode?.episodeNumber ?? 0
+
+  if (
+    show.currentSeason === nextSeason &&
+    show.currentEpisode === nextEpisode &&
+    show.status === nextStatus
+  ) {
+    return
+  }
+
   await db.shows.update(showId, {
-    currentSeason: lastWatchedEpisode?.seasonNumber ?? 1,
-    currentEpisode: lastWatchedEpisode?.episodeNumber ?? 0,
-    status: getAutomaticStatus(show, watchedEpisodes.length, episodes.length),
+    currentSeason: nextSeason,
+    currentEpisode: nextEpisode,
+    status: nextStatus,
     updatedAt,
   })
 }
 
-function getAutomaticStatus(show: Show, watchedEpisodes: number, totalEpisodes: number): WatchStatus {
-  if (watchedEpisodes === 0 || totalEpisodes === 0) {
+function getAutomaticStatus(
+  show: Show,
+  watchedEpisodes: number,
+  releasedEpisodes: number,
+  totalEpisodes: number,
+): WatchStatus {
+  if (watchedEpisodes === 0 || releasedEpisodes === 0) {
     return 'planned'
   }
 
-  if (watchedEpisodes < totalEpisodes) {
+  if (watchedEpisodes < releasedEpisodes) {
+    return 'watching'
+  }
+
+  if (releasedEpisodes < totalEpisodes) {
     return 'watching'
   }
 

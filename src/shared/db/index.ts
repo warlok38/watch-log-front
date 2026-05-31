@@ -7,6 +7,7 @@ export {
   markEpisode,
   markRange,
   markSeason,
+  refreshShowProgress,
   toggleEpisodeWatched,
   updateShowArchived,
   updateShowStatus,

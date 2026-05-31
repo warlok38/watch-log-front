@@ -20,6 +20,7 @@ export function buildEpisodesFromDraft(showId: string, episodeDrafts: ShowEpisod
     seasonNumber: episode.seasonNumber,
     episodeNumber: episode.episodeNumber,
     title: episode.title,
+    airDate: episode.airDate,
     watched: false,
   }))
 }

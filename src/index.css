@@ -212,6 +212,89 @@ p {
   margin-top: 6px;
 }
 
+.detail-header {
+  position: sticky;
+  top: 0;
+  z-index: 9;
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr) 40px;
+  align-items: center;
+  gap: 6px;
+  min-height: calc(46px + var(--safe-top));
+  margin: calc(-22px - var(--safe-top)) -16px 0;
+  padding: calc(6px + var(--safe-top)) 12px 6px;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(18px);
+  transform: translateY(0);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease;
+  box-shadow: 0 8px 24px rgb(15 23 42 / 6%);
+}
+
+.detail-header--hidden {
+  transform: translateY(-100%);
+}
+
+.detail-header__title {
+  min-width: 0;
+  text-align: center;
+}
+
+.detail-header__title h1 {
+  overflow: hidden;
+  font-size: 17px;
+  line-height: 1.12;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detail-header__title p {
+  margin-top: 2px;
+  font-size: 11px;
+}
+
+.detail-header__back,
+.detail-header__button {
+  min-width: 44px;
+  height: 34px;
+  padding: 0;
+  color: var(--text);
+}
+
+.detail-header__back {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  width: auto;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-weight: 650;
+  line-height: 1;
+  padding-inline: 0 8px;
+  white-space: nowrap;
+}
+
+.detail-header__button {
+  justify-self: end;
+}
+
+.detail-header__button .adm-button-content {
+  display: inline-grid;
+  place-items: center;
+}
+
+.detail-header__back {
+  gap: 3px;
+}
+
+.detail-header svg {
+  flex: 0 0 auto;
+  font-size: 19px;
+}
+
 .show-list {
   display: flex;
   flex-direction: column;
@@ -323,9 +406,25 @@ p {
   gap: 12px;
 }
 
-.details-actions {
-  display: grid;
-  gap: 10px;
+.next-episode-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid color-mix(in srgb, var(--primary) 24%, var(--border));
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--primary-soft) 54%, var(--surface));
+  box-shadow: var(--shadow-soft);
+}
+
+.next-episode-card h2 {
+  font-size: 17px;
+}
+
+.next-episode-card p {
+  margin-top: 4px;
+  font-size: 13px;
 }
 
 .season-block {
@@ -346,6 +445,58 @@ p {
   gap: 12px;
 }
 
+.season-block__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.season-collapse {
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+  border-radius: var(--radius);
+  background: var(--surface-elevated);
+  box-shadow: var(--shadow-soft);
+}
+
+.season-collapse .adm-list-item {
+  background: transparent;
+}
+
+.season-collapse .adm-list-item-content {
+  border-color: var(--border);
+}
+
+.season-collapse .adm-collapse-panel-content {
+  background: transparent;
+}
+
+.season-collapse .adm-collapse-panel-content-inner {
+  padding: 0;
+}
+
+.season-collapse .season-block {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.season-panel-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.season-panel-title__progress {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+
 .hint {
   font-size: 12px;
 }
@@ -354,6 +505,18 @@ p {
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
+
+.episode-button--future {
+  opacity: 0.58;
+  box-shadow: none;
+}
+
+.episode-air-date {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.2;
+  text-align: center;
 }
 
 .app-shell .adm-card {

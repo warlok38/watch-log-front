@@ -6,4 +6,5 @@ export type Episode = {
   watched: boolean
   watchedAt?: string
   title?: string
+  airDate?: string
 }

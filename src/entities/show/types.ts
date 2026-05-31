@@ -30,6 +30,7 @@ export type ShowEpisodeDraft = {
   seasonNumber: number
   episodeNumber: number
   title?: string
+  airDate?: string
 }
 
 export type ShowDraft = {

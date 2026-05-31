@@ -1,24 +1,35 @@
-import { Button, Dialog, ErrorBlock, Tag } from 'antd-mobile'
+import { ActionSheet, Button, Collapse, Dialog, ErrorBlock, Tag } from 'antd-mobile'
 import { useLiveQuery } from 'dexie-react-hooks'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import type { Episode } from '@/entities/episode'
 import { EpisodeGrid } from '@/features/episode-progress'
 import { routes } from '@/shared/config/routes'
-import { db, deleteShow, updateShowArchived } from '@/shared/db'
-import { PageHeader, ShowPoster } from '@/shared/ui'
+import { db, deleteShow, markEpisode, refreshShowProgress, updateShowArchived } from '@/shared/db'
+import { DetailHeader, ShowPoster } from '@/shared/ui'
+
+const HEADER_SCROLL_THRESHOLD = 14
+const HEADER_TOP_OFFSET = 24
 
 export function ShowDetailsPage() {
-  const { t } = useTranslation()
+  const { i18n, t } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
+  const isHeaderHidden = useDetailHeaderVisibility()
   const { showId } = useParams<{ showId: string }>()
   const show = useLiveQuery(() => (showId ? db.shows.get(showId) : undefined), [showId])
   const episodes = useLiveQuery(
     () => (showId ? db.episodes.where('showId').equals(showId).sortBy('episodeNumber') : []),
     [showId],
   )
+
+  useEffect(() => {
+    if (!showId || !episodes?.length) return
+
+    void refreshShowProgress(showId)
+  }, [episodes?.length, showId])
 
   if (!showId || show === null) {
     return <ErrorBlock status="empty" />
@@ -28,20 +39,38 @@ export function ShowDetailsPage() {
     return <section className="page" />
   }
 
-  const episodesBySeason = new Map<number, Episode[]>()
-  episodes
-    ?.toSorted((left, right) => {
+  const sortedEpisodes =
+    episodes?.toSorted((left, right) => {
       if (left.seasonNumber !== right.seasonNumber) {
         return left.seasonNumber - right.seasonNumber
       }
 
       return left.episodeNumber - right.episodeNumber
-    })
-    .forEach((episode) => {
+    }) ?? []
+  const episodesBySeason = new Map<number, Episode[]>()
+  sortedEpisodes.forEach((episode) => {
     const season = episodesBySeason.get(episode.seasonNumber) ?? []
     season.push(episode)
     episodesBySeason.set(episode.seasonNumber, season)
   })
+  const nextAvailableEpisode = sortedEpisodes.find(
+    (episode) => !episode.watched && !isFutureAirDate(episode.airDate),
+  )
+  const nextFutureEpisode = sortedEpisodes.find(
+    (episode) => !episode.watched && isFutureAirDate(episode.airDate),
+  )
+  const seasonEntries = [...episodesBySeason.entries()]
+  const activeSeasonNumber =
+    nextAvailableEpisode?.seasonNumber ??
+    nextFutureEpisode?.seasonNumber ??
+    show.currentSeason ??
+    seasonEntries[0]?.[0] ??
+    1
+  const formatAirDate = (airDate: string) =>
+    new Intl.DateTimeFormat(i18n.resolvedLanguage, {
+      day: 'numeric',
+      month: 'long',
+    }).format(new Date(airDate))
 
   const handleDelete = async () => {
     const confirmed = await Dialog.confirm({
@@ -56,16 +85,50 @@ export function ShowDetailsPage() {
     }
   }
 
+  const handleBack = () => {
+    if (location.key !== 'default' && window.history.length > 1) {
+      navigate(-1)
+      return
+    }
+
+    navigate(routes.home)
+  }
+
+  const handleMenuClick = () => {
+    ActionSheet.show({
+      actions: [
+        {
+          key: 'archive',
+          text: show.isArchived ? t('details.restoreFromArchive') : t('details.moveToArchive'),
+          onClick: () => void updateShowArchived(show.id, !show.isArchived),
+        },
+        {
+          key: 'delete',
+          text: t('details.delete'),
+          danger: true,
+          onClick: () => void handleDelete(),
+        },
+      ],
+      cancelText: t('common.cancel'),
+      closeOnAction: true,
+    })
+  }
+
   const locationState = location.state as { fromAdd?: boolean } | null
 
   return (
     <section className="page">
-      <PageHeader
+      <DetailHeader
         title={show.title}
         subtitle={t('home.progress', {
           season: show.currentSeason,
           episode: show.currentEpisode,
         })}
+        backLabel={t('common.back')}
+        menuLabel={t('details.actions')}
+        hidden={isHeaderHidden}
+        onBack={handleBack}
+        onMenuClick={handleMenuClick}
       />
 
       {locationState?.fromAdd && <p className="hint">{t('details.afterAddHint')}</p>}
@@ -81,31 +144,151 @@ export function ShowDetailsPage() {
         </div>
       </div>
 
-      {[...episodesBySeason.entries()].map(([seasonNumber, seasonEpisodes]) => (
-        <EpisodeGrid
-          key={seasonNumber}
-          showId={show.id}
-          seasonNumber={seasonNumber}
-          episodes={seasonEpisodes}
-        />
-      ))}
+      <section className="next-episode-card">
+        {nextAvailableEpisode ? (
+          <>
+            <div>
+              <h2>{t('details.nextEpisode')}</h2>
+              <p>
+                {t('details.episodeCode', {
+                  season: nextAvailableEpisode.seasonNumber,
+                  episode: nextAvailableEpisode.episodeNumber,
+                })}
+                {nextAvailableEpisode.title ? ` · ${nextAvailableEpisode.title}` : ''}
+              </p>
+            </div>
+            <Button
+              color="primary"
+              onClick={() =>
+                void markEpisode(
+                  show.id,
+                  nextAvailableEpisode.seasonNumber,
+                  nextAvailableEpisode.episodeNumber,
+                )
+              }
+            >
+              {t('details.markWatched')}
+            </Button>
+          </>
+        ) : nextFutureEpisode?.airDate ? (
+          <>
+            <div>
+              <h2>{t('details.nextEpisode')}</h2>
+              <p>
+                {t('details.nextEpisodeAirDate', {
+                  date: formatAirDate(nextFutureEpisode.airDate),
+                })}
+              </p>
+            </div>
+            <Button fill="outline" aria-disabled>
+              {t('details.waitingForRelease')}
+            </Button>
+          </>
+        ) : (
+          <div>
+            <h2>{t('details.allCaughtUp')}</h2>
+            <p>{t('details.allCaughtUpDescription')}</p>
+          </div>
+        )}
+      </section>
 
-      <div className="details-actions">
-        <Button block color="primary" fill="outline" onClick={() => navigate(routes.home)}>
-          {t('details.toLibrary')}
-        </Button>
-        <Button
-          block
-          fill="outline"
-          onClick={() => void updateShowArchived(show.id, !show.isArchived)}
+      {seasonEntries.length > 1 ? (
+        <Collapse
+          key={`${show.id}-${activeSeasonNumber}`}
+          className="season-collapse"
+          accordion
+          defaultActiveKey={String(activeSeasonNumber)}
         >
-          {show.isArchived ? t('details.restoreFromArchive') : t('details.moveToArchive')}
-        </Button>
-      </div>
+          {seasonEntries.map(([seasonNumber, seasonEpisodes]) => (
+            <Collapse.Panel
+              key={String(seasonNumber)}
+              title={
+                <SeasonPanelTitle
+                  episodes={seasonEpisodes}
+                  label={t('details.season', { season: seasonNumber })}
+                />
+              }
+            >
+              <EpisodeGrid
+                showId={show.id}
+                seasonNumber={seasonNumber}
+                episodes={seasonEpisodes}
+                showHeader={false}
+              />
+            </Collapse.Panel>
+          ))}
+        </Collapse>
+      ) : (
+        seasonEntries.map(([seasonNumber, seasonEpisodes]) => (
+          <EpisodeGrid
+            key={seasonNumber}
+            showId={show.id}
+            seasonNumber={seasonNumber}
+            episodes={seasonEpisodes}
+          />
+        ))
+      )}
 
-      <Button block color="danger" fill="outline" onClick={() => void handleDelete()}>
-        {t('details.delete')}
-      </Button>
     </section>
   )
+}
+
+function isFutureAirDate(airDate?: string): boolean {
+  if (!airDate) return false
+
+  const airTime = new Date(airDate).getTime()
+
+  return !Number.isNaN(airTime) && airTime > Date.now()
+}
+
+function SeasonPanelTitle({
+  episodes,
+  label,
+}: {
+  episodes: Episode[]
+  label: string
+}) {
+  const watchedEpisodes = episodes.filter((episode) => episode.watched).length
+
+  return (
+    <div className="season-panel-title">
+      <span>{label}</span>
+      <span className="season-panel-title__progress">
+        {watchedEpisodes}/{episodes.length}
+      </span>
+    </div>
+  )
+}
+
+function useDetailHeaderVisibility(): boolean {
+  const [isHidden, setIsHidden] = useState(false)
+  const previousScrollYRef = useRef(0)
+
+  useEffect(() => {
+    previousScrollYRef.current = window.scrollY
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      const delta = currentScrollY - previousScrollYRef.current
+
+      if (currentScrollY <= HEADER_TOP_OFFSET) {
+        setIsHidden(false)
+        previousScrollYRef.current = currentScrollY
+        return
+      }
+
+      if (Math.abs(delta) < HEADER_SCROLL_THRESHOLD) {
+        return
+      }
+
+      setIsHidden(delta < 0)
+      previousScrollYRef.current = currentScrollY
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  return isHidden
 }

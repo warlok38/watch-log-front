@@ -22,6 +22,8 @@ type TvMazeEpisode = {
   name?: string
   season: number
   number?: number
+  airdate?: string
+  airstamp?: string
 }
 
 function stripHtml(value?: string): string | undefined {
@@ -103,6 +105,7 @@ export const tvmazeProvider: ShowSearchProvider = {
         seasonNumber: episode.season,
         episodeNumber: episode.number ?? 1,
         title: episode.name,
+        airDate: episode.airstamp ?? episode.airdate,
       }))
 
     if (!episodes.length) {
