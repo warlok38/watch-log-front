@@ -1,0 +1,116 @@
+export const resources = {
+  ru: {
+    translation: {
+      app: {
+        title: 'WatchLog',
+        subtitle: 'Личный дневник сериалов и аниме',
+        offline: 'Офлайн',
+        online: 'Онлайн',
+      },
+      nav: {
+        library: 'Библиотека',
+        search: 'Поиск',
+        settings: 'Настройки',
+      },
+      status: {
+        watching: 'Смотрю',
+        planned: 'Буду смотреть',
+        waiting: 'Жду новый сезон',
+        completed: 'Просмотрено',
+        dropped: 'Брошено',
+      },
+      home: {
+        emptyTitle: 'Библиотека пока пустая',
+        emptyDescription: 'Найди сериал или аниме через поиск либо добавь вручную.',
+        quickAdd: 'Добавить',
+        progress: 'S{{season}} · E{{episode}}',
+      },
+      search: {
+        title: 'Найти тайтл',
+        placeholder: 'Например: The Office, Naruto',
+        addManual: 'Добавить вручную',
+        add: 'Добавить',
+        provider: 'Источник: {{provider}}',
+        nothing: 'Ничего не найдено',
+      },
+      details: {
+        markOne: 'Отметить серию',
+        markRange: 'Отметить до этой серии',
+        markSeason: 'Отметить сезон',
+        delete: 'Удалить',
+        season: 'Сезон {{season}}',
+      },
+      form: {
+        title: 'Название',
+        kind: 'Тип',
+        series: 'Сериал',
+        anime: 'Аниме',
+        seasons: 'Сезонов',
+        episodes: 'Серий в сезоне',
+        save: 'Сохранить',
+      },
+      settings: {
+        title: 'Настройки',
+        language: 'Язык',
+        storage: 'Данные хранятся локально в IndexedDB и доступны без авторизации.',
+      },
+    },
+  },
+  en: {
+    translation: {
+      app: {
+        title: 'WatchLog',
+        subtitle: 'Personal series and anime watch diary',
+        offline: 'Offline',
+        online: 'Online',
+      },
+      nav: {
+        library: 'Library',
+        search: 'Search',
+        settings: 'Settings',
+      },
+      status: {
+        watching: 'Watching',
+        planned: 'Plan to watch',
+        waiting: 'Waiting for season',
+        completed: 'Completed',
+        dropped: 'Dropped',
+      },
+      home: {
+        emptyTitle: 'Your library is empty',
+        emptyDescription: 'Search for a show or anime, or add it manually.',
+        quickAdd: 'Add',
+        progress: 'S{{season}} · E{{episode}}',
+      },
+      search: {
+        title: 'Find a title',
+        placeholder: 'Example: The Office, Naruto',
+        addManual: 'Add manually',
+        add: 'Add',
+        provider: 'Source: {{provider}}',
+        nothing: 'Nothing found',
+      },
+      details: {
+        markOne: 'Mark episode',
+        markRange: 'Mark up to this episode',
+        markSeason: 'Mark season',
+        delete: 'Delete',
+        season: 'Season {{season}}',
+      },
+      form: {
+        title: 'Title',
+        kind: 'Type',
+        series: 'Series',
+        anime: 'Anime',
+        seasons: 'Seasons',
+        episodes: 'Episodes per season',
+        save: 'Save',
+      },
+      settings: {
+        title: 'Settings',
+        language: 'Language',
+        storage: 'Data is stored locally in IndexedDB and works without accounts.',
+      },
+    },
+  },
+} as const

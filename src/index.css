@@ -1,0 +1,191 @@
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --bg: #f5f7fb;
+  --surface: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --primary: #1677ff;
+  --radius: 20px;
+
+  font: 16px/1.5 system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100svh;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+h1 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.1;
+}
+
+h2,
+h3 {
+  margin: 0;
+}
+
+p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.app-shell {
+  max-width: 520px;
+  min-height: 100svh;
+  margin: 0 auto;
+  background: var(--bg);
+  border-inline: 1px solid var(--border);
+  position: relative;
+}
+
+.app-shell__content {
+  min-height: 100svh;
+  padding-bottom: calc(80px + var(--safe-bottom));
+}
+
+.app-shell__tabs {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  max-width: 520px;
+  margin: 0 auto;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  z-index: 10;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: calc(20px + var(--safe-top)) 16px 20px;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.page-header p {
+  margin-top: 6px;
+}
+
+.show-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.show-card {
+  border-radius: var(--radius);
+}
+
+.show-card__layout {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  gap: 12px;
+}
+
+.show-card__body {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.show-card__title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.show-card__title-row h3 {
+  overflow: hidden;
+  font-size: 16px;
+  text-overflow: ellipsis;
+}
+
+.show-poster {
+  width: 76px;
+  height: 108px;
+  object-fit: cover;
+  border-radius: 14px;
+  background: #dbeafe;
+}
+
+.show-poster--fallback {
+  display: grid;
+  place-items: center;
+  color: var(--primary);
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.empty-state,
+.center-loader {
+  align-self: center;
+  margin-top: 40px;
+}
+
+.manual-collapse {
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.details-hero {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 16px;
+}
+
+.details-hero .show-poster {
+  width: 96px;
+  height: 136px;
+}
+
+.season-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: var(--surface);
+  border-radius: var(--radius);
+}
+
+.season-block__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.hint {
+  font-size: 12px;
+}
+
+.episode-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
