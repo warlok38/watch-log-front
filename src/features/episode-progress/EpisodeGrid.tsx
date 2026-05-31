@@ -2,7 +2,7 @@ import { Button, Grid } from 'antd-mobile'
 import { useTranslation } from 'react-i18next'
 
 import type { Episode } from '@/entities/episode'
-import { markEpisode, markRange, markSeason } from '@/shared/db'
+import { markRange, markSeason, toggleEpisodeWatched } from '@/shared/db'
 
 type EpisodeGridProps = {
   showId: string
@@ -30,7 +30,7 @@ export function EpisodeGrid({ showId, seasonNumber, episodes }: EpisodeGridProps
                 size="small"
                 color={episode.watched ? 'primary' : 'default'}
                 fill={episode.watched ? 'solid' : 'outline'}
-                onClick={() => void markEpisode(showId, seasonNumber, episode.episodeNumber)}
+                onClick={() => void toggleEpisodeWatched(showId, seasonNumber, episode.episodeNumber)}
               >
                 E{episode.episodeNumber}
               </Button>
@@ -40,7 +40,7 @@ export function EpisodeGrid({ showId, seasonNumber, episodes }: EpisodeGridProps
                 fill="none"
                 onClick={() => void markRange(showId, seasonNumber, episode.episodeNumber)}
               >
-                до
+                {t('details.markUpTo')}
               </Button>
             </div>
           </Grid.Item>

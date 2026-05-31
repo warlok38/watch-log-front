@@ -1,1 +1,9 @@
-export type { ExternalProvider, Show, ShowDraft, ShowKind, WatchStatus } from './types'
+export type {
+  ExternalProvider,
+  ExternalShowStatus,
+  Show,
+  ShowDraft,
+  ShowEpisodeDraft,
+  ShowKind,
+  WatchStatus,
+} from './types'

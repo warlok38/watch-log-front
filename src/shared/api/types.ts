@@ -12,4 +12,5 @@ export type ShowSearchProvider = {
   provider: ExternalProvider
   label: string
   search(query: string): Promise<ShowSearchResult[]>
+  getDetails?(result: ShowSearchResult): Promise<ShowDraft>
 }

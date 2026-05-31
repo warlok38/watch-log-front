@@ -24,6 +24,23 @@ export class WatchLogDatabase extends Dexie {
       watchEvents: 'id, showId, createdAt',
       settings: 'key',
     })
+
+    this.version(2)
+      .stores({
+        shows: 'id, status, kind, title, updatedAt, externalStatus, isArchived, [externalProvider+externalId]',
+        episodes: 'id, showId, [showId+seasonNumber+episodeNumber], watched',
+        watchEvents: 'id, showId, createdAt',
+        settings: 'key',
+      })
+      .upgrade((transaction) =>
+        transaction
+          .table('shows')
+          .toCollection()
+          .modify((show) => {
+            show.externalStatus ??= 'unknown'
+            show.isArchived ??= false
+          }),
+      )
   }
 }
 

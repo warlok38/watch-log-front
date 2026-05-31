@@ -1,3 +1,4 @@
+import type { ExternalShowStatus } from '@/entities/show'
 import type { ShowSearchProvider, ShowSearchResult } from '@/shared/api/types'
 
 type JikanSearchResponse = {
@@ -9,6 +10,7 @@ type JikanSearchResponse = {
     year?: number
     score?: number
     episodes?: number
+    status?: string
     images?: {
       jpg?: {
         image_url?: string
@@ -18,6 +20,19 @@ type JikanSearchResponse = {
       }
     }
   }>
+}
+
+function mapJikanStatus(status?: string): ExternalShowStatus {
+  switch (status?.toLowerCase()) {
+    case 'finished airing':
+      return 'ended'
+    case 'currently airing':
+      return 'running'
+    case 'not yet aired':
+      return 'in_development'
+    default:
+      return 'unknown'
+  }
 }
 
 export const jikanProvider: ShowSearchProvider = {
@@ -44,6 +59,7 @@ export const jikanProvider: ShowSearchProvider = {
       kind: 'anime',
       posterUrl: anime.images?.webp?.image_url ?? anime.images?.jpg?.image_url,
       summary: anime.synopsis,
+      externalStatus: mapJikanStatus(anime.status),
       seasonsCount: 1,
       episodesPerSeason: anime.episodes ?? 12,
       year: anime.year,

@@ -7,5 +7,7 @@ export {
   markEpisode,
   markRange,
   markSeason,
+  toggleEpisodeWatched,
+  updateShowArchived,
   updateShowStatus,
 } from './libraryRepository'

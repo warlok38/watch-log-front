@@ -6,7 +6,13 @@ export type WatchProgress = {
   totalEpisodes: number
 }
 
-export type WatchEventType = 'episode-marked' | 'range-marked' | 'season-marked' | 'status-changed'
+export type WatchEventType =
+  | 'episode-marked'
+  | 'episode-unmarked'
+  | 'range-marked'
+  | 'season-marked'
+  | 'status-changed'
+  | 'archive-changed'
 
 export type WatchEvent = {
   id: string
