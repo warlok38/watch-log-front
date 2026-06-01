@@ -26,6 +26,7 @@
   z-index: 10;
   max-width: var(--layout-mobile-max-width);
   margin: 0 auto;
+  padding-bottom: var(--safe-bottom);
   border-top: 1px solid var(--border);
   background: color-mix(in srgb, var(--surface) 88%, transparent);
   box-shadow: 0 -12px 32px rgb(34 48 76 / 8%);
@@ -185,9 +186,14 @@
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 25%);
 }
 
+.shell :global(input),
+.shell :global(textarea) {
+  font-size: max(16px, 1em);
+}
+
 .shell :global(.adm-search-bar-input-box input) {
   color: var(--text);
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .shell :global(.adm-search-bar-input-box input::placeholder) {
