@@ -8,6 +8,13 @@ import type { Episode } from '@/entities/episode'
 import { EpisodeGrid } from '@/features/episode-progress'
 import { routes } from '@/shared/config/routes'
 import { db, deleteShow, markEpisode, refreshShowProgress, updateShowArchived } from '@/shared/db'
+import {
+  formatEpisodeAirDate,
+  getActiveSeasonNumber,
+  getNextEpisodeAction,
+  shouldShowNextEpisodeCard,
+  sortEpisodes,
+} from '@/shared/lib/episodeProgress'
 import { DetailHeader, ShowPoster } from '@/shared/ui'
 
 import styles from './ShowDetailsPage.module.css'
@@ -41,38 +48,26 @@ export function ShowDetailsPage() {
     return <section className={styles.page} />
   }
 
-  const sortedEpisodes =
-    episodes?.toSorted((left, right) => {
-      if (left.seasonNumber !== right.seasonNumber) {
-        return left.seasonNumber - right.seasonNumber
-      }
-
-      return left.episodeNumber - right.episodeNumber
-    }) ?? []
+  const sortedEpisodes = sortEpisodes(episodes ?? [])
   const episodesBySeason = new Map<number, Episode[]>()
   sortedEpisodes.forEach((episode) => {
     const season = episodesBySeason.get(episode.seasonNumber) ?? []
     season.push(episode)
     episodesBySeason.set(episode.seasonNumber, season)
   })
-  const nextAvailableEpisode = sortedEpisodes.find(
-    (episode) => !episode.watched && !isFutureAirDate(episode.airDate),
-  )
-  const nextFutureEpisode = sortedEpisodes.find(
-    (episode) => !episode.watched && isFutureAirDate(episode.airDate),
-  )
+  const nextEpisodeAction = getNextEpisodeAction(show, sortedEpisodes)
   const seasonEntries = [...episodesBySeason.entries()]
-  const activeSeasonNumber =
-    nextAvailableEpisode?.seasonNumber ??
-    nextFutureEpisode?.seasonNumber ??
-    show.currentSeason ??
-    seasonEntries[0]?.[0] ??
-    1
+  const activeSeasonNumber = getActiveSeasonNumber(show, sortedEpisodes, nextEpisodeAction)
   const formatAirDate = (airDate: string) =>
-    new Intl.DateTimeFormat(i18n.resolvedLanguage, {
-      day: 'numeric',
-      month: 'long',
-    }).format(new Date(airDate))
+    formatEpisodeAirDate(airDate, i18n.resolvedLanguage, 'long')
+  const nextAvailableEpisode =
+    nextEpisodeAction.kind === 'mark'
+      ? sortedEpisodes.find(
+          (episode) =>
+            episode.seasonNumber === nextEpisodeAction.season &&
+            episode.episodeNumber === nextEpisodeAction.episode,
+        )
+      : undefined
 
   const handleDelete = async () => {
     const confirmed = await Dialog.confirm({
@@ -146,53 +141,68 @@ export function ShowDetailsPage() {
         </div>
       </div>
 
-      <section className={styles.nextEpisodeCard}>
-        {nextAvailableEpisode ? (
-          <>
-            <div>
-              <h2>{t('details.nextEpisode')}</h2>
-              <p>
-                {t('details.episodeCode', {
-                  season: nextAvailableEpisode.seasonNumber,
-                  episode: nextAvailableEpisode.episodeNumber,
-                })}
-                {nextAvailableEpisode.title ? ` · ${nextAvailableEpisode.title}` : ''}
-              </p>
-            </div>
+      {shouldShowNextEpisodeCard(show, nextEpisodeAction) && (
+        <section className={styles.nextEpisodeCard}>
+          {nextEpisodeAction.kind === 'mark' && (
+            <>
+              <div>
+                <h2>{t('details.nextEpisode')}</h2>
+                <p>
+                  {t('details.episodeCode', {
+                    season: nextEpisodeAction.season,
+                    episode: nextEpisodeAction.episode,
+                  })}
+                  {nextAvailableEpisode?.title ? ` · ${nextAvailableEpisode.title}` : ''}
+                </p>
+              </div>
+              <Button
+                color="primary"
+                onClick={() =>
+                  void markEpisode(show.id, nextEpisodeAction.season, nextEpisodeAction.episode)
+                }
+              >
+                {t('details.markWatched')}
+              </Button>
+            </>
+          )}
+          {nextEpisodeAction.kind === 'wait' && (
+            <>
+              <div>
+                <h2>{t('details.nextEpisode')}</h2>
+                <p>
+                  {t('details.episodeCode', {
+                    season: nextEpisodeAction.season,
+                    episode: nextEpisodeAction.episode,
+                  })}
+                  {nextEpisodeAction.airDate
+                    ? ` · ${t('details.nextEpisodeAirDate', {
+                        date: formatAirDate(nextEpisodeAction.airDate),
+                      })}`
+                    : ''}
+                </p>
+              </div>
+              <Button fill="outline" aria-disabled>
+                {t('details.waitingForRelease')}
+              </Button>
+            </>
+          )}
+          {nextEpisodeAction.kind === 'archive' && (
             <Button
-              color="primary"
-              onClick={() =>
-                void markEpisode(
-                  show.id,
-                  nextAvailableEpisode.seasonNumber,
-                  nextAvailableEpisode.episodeNumber,
-                )
-              }
+              className={styles.archiveButton}
+              fill="outline"
+              onClick={() => void updateShowArchived(show.id, true)}
             >
-              {t('details.markWatched')}
+              {t('details.moveToArchive')}
             </Button>
-          </>
-        ) : nextFutureEpisode?.airDate ? (
-          <>
+          )}
+          {nextEpisodeAction.kind === 'none' && (
             <div>
-              <h2>{t('details.nextEpisode')}</h2>
-              <p>
-                {t('details.nextEpisodeAirDate', {
-                  date: formatAirDate(nextFutureEpisode.airDate),
-                })}
-              </p>
+              <h2>{t('details.allCaughtUp')}</h2>
+              <p>{t('details.allCaughtUpDescription')}</p>
             </div>
-            <Button fill="outline" aria-disabled>
-              {t('details.waitingForRelease')}
-            </Button>
-          </>
-        ) : (
-          <div>
-            <h2>{t('details.allCaughtUp')}</h2>
-            <p>{t('details.allCaughtUpDescription')}</p>
-          </div>
-        )}
-      </section>
+          )}
+        </section>
+      )}
 
       {seasonEntries.length > 1 ? (
         <Collapse
@@ -233,14 +243,6 @@ export function ShowDetailsPage() {
 
     </section>
   )
-}
-
-function isFutureAirDate(airDate?: string): boolean {
-  if (!airDate) return false
-
-  const airTime = new Date(airDate).getTime()
-
-  return !Number.isNaN(airTime) && airTime > Date.now()
 }
 
 function SeasonPanelTitle({

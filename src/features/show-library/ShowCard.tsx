@@ -1,30 +1,26 @@
-import { Button, Card, ProgressBar, Tag } from 'antd-mobile'
+import { Card, ProgressBar, Tag } from 'antd-mobile'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
+import type { Episode } from '@/entities/episode'
 import type { Show } from '@/entities/show'
 import { routes } from '@/shared/config/routes'
-import { markEpisode } from '@/shared/db'
 import { ShowPoster } from '@/shared/ui'
 
+import { ShowQuickActionButton } from './ShowQuickActionButton'
 import styles from './ShowCard.module.css'
 
 type ShowCardProps = {
   show: Show
+  episodes: Episode[]
   watchedEpisodes: number
   totalEpisodes: number
 }
 
-export function ShowCard({ show, watchedEpisodes, totalEpisodes }: ShowCardProps) {
+export function ShowCard({ show, episodes, watchedEpisodes, totalEpisodes }: ShowCardProps) {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const progress = totalEpisodes > 0 ? Math.round((watchedEpisodes / totalEpisodes) * 100) : 0
-
-  const nextEpisode = Math.min(show.currentEpisode + 1, show.episodesPerSeason)
-
-  const handleQuickMark = async () => {
-    await markEpisode(show.id, show.currentSeason, nextEpisode)
-  }
 
   return (
     <Card className={styles.card} onClick={() => navigate(routes.showDetails(show.id))}>
@@ -41,18 +37,7 @@ export function ShowCard({ show, watchedEpisodes, totalEpisodes }: ShowCardProps
           </div>
           <p>{t('home.progress', { season: show.currentSeason, episode: show.currentEpisode })}</p>
           <ProgressBar percent={progress} />
-          <Button
-            className={styles.quickMarkButton}
-            size="small"
-            color="primary"
-            fill="solid"
-            onClick={(event) => {
-              event.stopPropagation()
-              void handleQuickMark()
-            }}
-          >
-            {t('home.quickMark', { season: show.currentSeason, episode: nextEpisode })}
-          </Button>
+          <ShowQuickActionButton show={show} episodes={episodes} />
         </div>
       </div>
     </Card>

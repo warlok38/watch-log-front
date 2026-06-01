@@ -1,27 +1,23 @@
-import { Button } from 'antd-mobile'
 import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
+import type { Episode } from '@/entities/episode'
 import type { Show } from '@/entities/show'
 import { routes } from '@/shared/config/routes'
-import { markEpisode } from '@/shared/db'
 
+import { ShowQuickActionButton } from './ShowQuickActionButton'
 import cardStyles from './ShowCard.module.css'
 import styles from './ShowListRow.module.css'
 
 type ShowListRowProps = {
   show: Show
+  episodes: Episode[]
 }
 
-export function ShowListRow({ show }: ShowListRowProps) {
+export function ShowListRow({ show, episodes }: ShowListRowProps) {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const nextEpisode = Math.min(show.currentEpisode + 1, show.episodesPerSeason)
-
-  const handleQuickMark = async () => {
-    await markEpisode(show.id, show.currentSeason, nextEpisode)
-  }
 
   return (
     <div
@@ -43,18 +39,11 @@ export function ShowListRow({ show }: ShowListRowProps) {
           {t('home.progress', { season: show.currentSeason, episode: show.currentEpisode })}
         </span>
       </span>
-      <Button
+      <ShowQuickActionButton
+        show={show}
+        episodes={episodes}
         className={classNames(cardStyles.quickMarkButton, styles.button)}
-        size="small"
-        color="primary"
-        fill="solid"
-        onClick={(event) => {
-          event.stopPropagation()
-          void handleQuickMark()
-        }}
-      >
-        {t('home.quickMark', { season: show.currentSeason, episode: nextEpisode })}
-      </Button>
+      />
     </div>
   )
 }

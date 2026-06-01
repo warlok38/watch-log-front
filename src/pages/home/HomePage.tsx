@@ -2,14 +2,16 @@ import { Button, SearchBar } from 'antd-mobile'
 import { AppstoreOutline, CloseOutline, SearchOutline, UnorderedListOutline } from 'antd-mobile-icons'
 import classNames from 'classnames'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
 import { useAppStore } from '@/app/providers/useAppStore'
+import type { Episode } from '@/entities/episode'
 import { ShowCard, ShowListRow, StatusFilter } from '@/features/show-library'
 import { routes } from '@/shared/config/routes'
 import { db } from '@/shared/db'
+import { sortLibraryShows, sortShowsAlphabetically } from '@/shared/lib/episodeProgress'
 
 import styles from './HomePage.module.css'
 
@@ -34,6 +36,26 @@ export function HomePage() {
 
     return matchesStatus && matchesQuery
   })
+  const episodesByShowId = useMemo(() => {
+    const map = new Map<string, Episode[]>()
+
+    for (const episode of episodes ?? []) {
+      const showEpisodes = map.get(episode.showId) ?? []
+      showEpisodes.push(episode)
+      map.set(episode.showId, showEpisodes)
+    }
+
+    return map
+  }, [episodes])
+  const sortedShows = useMemo(() => {
+    if (!filteredShows) return filteredShows
+
+    if (activeStatus === 'archive') {
+      return sortShowsAlphabetically(filteredShows)
+    }
+
+    return sortLibraryShows(filteredShows, episodesByShowId)
+  }, [activeStatus, episodesByShowId, filteredShows])
   const hasShows = Boolean(shows?.length)
   const isListView = libraryView === 'list'
 
@@ -86,7 +108,7 @@ export function HomePage() {
 
       <StatusFilter />
 
-      {!filteredShows?.length ? (
+      {!sortedShows?.length ? (
         <div className={styles.emptyState}>
           <strong>{hasShows ? t('home.emptySearchTitle') : t('home.emptyTitle')}</strong>
           <p>{hasShows ? t('home.emptySearchDescription') : t('home.emptyDescription')}</p>
@@ -98,16 +120,17 @@ export function HomePage() {
         </div>
       ) : (
         <div className={classNames(styles.showList, { [styles.rowList]: isListView })}>
-          {filteredShows.map((show) => {
-            const showEpisodes = episodes?.filter((episode) => episode.showId === show.id) ?? []
+          {sortedShows.map((show) => {
+            const showEpisodes = episodesByShowId.get(show.id) ?? []
             const watchedEpisodes = showEpisodes.filter((episode) => episode.watched).length
 
             return isListView ? (
-              <ShowListRow key={show.id} show={show} />
+              <ShowListRow key={show.id} show={show} episodes={showEpisodes} />
             ) : (
               <ShowCard
                 key={show.id}
                 show={show}
+                episodes={showEpisodes}
                 watchedEpisodes={watchedEpisodes}
                 totalEpisodes={showEpisodes.length}
               />

@@ -61,6 +61,11 @@
   font-size: 13px;
 }
 
+.archiveButton {
+  margin-left: auto;
+  opacity: 0.58;
+}
+
 .seasonCollapse {
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);

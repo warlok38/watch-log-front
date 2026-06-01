@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 import type { Episode } from '@/entities/episode'
 import { markRange, markSeason, toggleEpisodeWatched } from '@/shared/db'
+import { formatEpisodeAirDate, isFutureAirDate } from '@/shared/lib/episodeProgress'
 
 import styles from './EpisodeGrid.module.css'
 
@@ -17,11 +18,7 @@ type EpisodeGridProps = {
 export function EpisodeGrid({ showId, seasonNumber, episodes, showHeader = true }: EpisodeGridProps) {
   const { i18n, t } = useTranslation()
 
-  const formatAirDate = (airDate: string) =>
-    new Intl.DateTimeFormat(i18n.resolvedLanguage, {
-      day: 'numeric',
-      month: 'short',
-    }).format(new Date(airDate))
+  const formatAirDate = (airDate: string) => formatEpisodeAirDate(airDate, i18n.resolvedLanguage, 'short')
 
   const showFutureEpisodeDate = (episode: Episode) => {
     if (!episode.airDate) return
@@ -98,12 +95,4 @@ export function EpisodeGrid({ showId, seasonNumber, episodes, showHeader = true 
       <p className={styles.hint}>{t('details.markRange')}</p>
     </section>
   )
-}
-
-function isFutureAirDate(airDate?: string): boolean {
-  if (!airDate) return false
-
-  const airTime = new Date(airDate).getTime()
-
-  return !Number.isNaN(airTime) && airTime > Date.now()
 }

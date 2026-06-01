@@ -2,6 +2,8 @@ import type { Show, ShowDraft, WatchStatus } from '@/entities/show'
 import type { WatchEvent, WatchEventType } from '@/entities/watch-progress'
 import Dexie from 'dexie'
 
+import { isEpisodeReleased } from '@/shared/lib/episodeProgress'
+
 import { buildEpisodes, buildEpisodesFromDraft } from './episodes'
 import { createId } from './ids'
 import { db } from './schema'
@@ -12,14 +14,6 @@ const DEFAULT_STATUS: WatchStatus = 'planned'
 
 function nowIso(): string {
   return new Date().toISOString()
-}
-
-function isEpisodeReleased(episode: { airDate?: string }): boolean {
-  if (!episode.airDate) return true
-
-  const airTime = new Date(episode.airDate).getTime()
-
-  return Number.isNaN(airTime) || airTime <= Date.now()
 }
 
 export async function addShow(draft: ShowDraft): Promise<string> {
@@ -92,7 +86,7 @@ export async function markEpisode(showId: string, seasonNumber: number, episodeN
     .equals([showId, seasonNumber, episodeNumber])
     .first()
 
-  if (!episode || !isEpisodeReleased(episode)) return
+  if (!episode || !isEpisodeReleased(episode.airDate)) return
 
   await db.transaction('rw', db.episodes, db.shows, db.watchEvents, async () => {
     await db.episodes
@@ -115,7 +109,7 @@ export async function toggleEpisodeWatched(
     .first()
 
   if (!episode) return
-  if (!isEpisodeReleased(episode) && !episode.watched) return
+  if (!isEpisodeReleased(episode.airDate) && !episode.watched) return
 
   const watched = !episode.watched
   const changedAt = nowIso()
@@ -140,7 +134,7 @@ export async function markSeason(showId: string, seasonNumber: number): Promise<
     .where('[showId+seasonNumber+episodeNumber]')
     .between([showId, seasonNumber, Dexie.minKey], [showId, seasonNumber, Dexie.maxKey])
     .toArray()
-  const releasedEpisodes = episodes.filter(isEpisodeReleased)
+  const releasedEpisodes = episodes.filter((episode) => isEpisodeReleased(episode.airDate))
   const lastEpisode = Math.max(...releasedEpisodes.map((episode) => episode.episodeNumber), 0)
 
   if (lastEpisode > 0) {
@@ -158,7 +152,7 @@ export async function markRange(
   const episodes = await db.episodes.where('showId').equals(showId).toArray()
   const updates = episodes
     .filter((episode) => {
-      if (!isEpisodeReleased(episode)) return false
+      if (!isEpisodeReleased(episode.airDate)) return false
       if (episode.seasonNumber < toSeasonNumber) return true
       return episode.seasonNumber === toSeasonNumber && episode.episodeNumber <= toEpisodeNumber
     })
@@ -185,7 +179,7 @@ async function updateShowProgress(showId: string, updatedAt: string): Promise<vo
 
   if (!show) return
 
-  const releasedEpisodes = episodes.filter(isEpisodeReleased)
+  const releasedEpisodes = episodes.filter((episode) => isEpisodeReleased(episode.airDate))
   const watchedReleasedEpisodes = releasedEpisodes.filter((episode) => episode.watched)
   const lastWatchedEpisode = watchedReleasedEpisodes.toSorted((left, right) => {
     if (left.seasonNumber !== right.seasonNumber) {

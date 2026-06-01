@@ -6,7 +6,6 @@
 }
 
 .searchPanel {
-  padding: 4px;
   border: 1px solid color-mix(in srgb, var(--border) 54%, transparent);
   border-radius: var(--radius);
   background: color-mix(in srgb, var(--surface) 78%, transparent);

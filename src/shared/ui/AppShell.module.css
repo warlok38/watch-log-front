@@ -5,7 +5,11 @@
   margin: 0 auto;
   border-inline: 1px solid var(--border);
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--bg-accent) 54%, transparent), transparent 16rem),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--bg-accent) 54%, transparent),
+      transparent 16rem
+    ),
     var(--bg);
 }
 
@@ -114,10 +118,6 @@
   margin: 0 -14px;
   padding: 0 14px;
   border: 0;
-}
-
-.shell :global(.adm-capsule-tabs-tab-list) {
-  gap: 8px;
 }
 
 .shell :global(.adm-capsule-tabs-tab) {
