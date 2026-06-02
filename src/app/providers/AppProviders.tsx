@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { BrowserRouter } from 'react-router-dom'
 
 import { getRouterBasename } from '@/shared/config/basePath'
-import '@/shared/i18n'
+import { applyDocumentLanguage } from '@/shared/i18n'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,6 +26,10 @@ export function AppProviders({ children }: PropsWithChildren) {
   useEffect(() => {
     setDefaultConfig({ locale })
   }, [locale])
+
+  useEffect(() => {
+    applyDocumentLanguage(i18n.resolvedLanguage)
+  }, [i18n.resolvedLanguage])
 
   return (
     <QueryClientProvider client={queryClient}>

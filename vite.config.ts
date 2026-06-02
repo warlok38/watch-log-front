@@ -24,6 +24,7 @@ export default defineConfig({
       manifest: {
         name: 'WatchLog',
         short_name: 'WatchLog',
+        lang: 'ru',
         description: 'Личный дневник просмотра сериалов и аниме',
         theme_color: '#1677ff',
         background_color: '#f5f7fb',
