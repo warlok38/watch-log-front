@@ -2,6 +2,7 @@ import { Suspense, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { AppRouter } from '@/app/router/AppRouter'
+import { PwaUpdateBanner } from '@/features/pwa-update'
 import { getRouterBasename } from '@/shared/config/basePath'
 import { routes } from '@/shared/config/routes'
 import { nativeBridge, setupNativeUi } from '@/shared/native'
@@ -43,6 +44,7 @@ function App() {
 
   return (
     <AppShell>
+      <PwaUpdateBanner />
       <Suspense fallback={<section className={styles.fallbackPage} />}>
         <AppRouter />
       </Suspense>
