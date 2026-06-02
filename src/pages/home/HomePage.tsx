@@ -1,8 +1,13 @@
 import { Button, SearchBar } from 'antd-mobile'
-import { AppstoreOutline, CloseOutline, SearchOutline, UnorderedListOutline } from 'antd-mobile-icons'
+import {
+  AppstoreOutline,
+  CloseOutline,
+  SearchOutline,
+  UnorderedListOutline,
+} from 'antd-mobile-icons'
 import classNames from 'classnames'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
@@ -59,52 +64,81 @@ export function HomePage() {
   const hasShows = Boolean(shows?.length)
   const isListView = libraryView === 'list'
 
+  const closeSearch = useCallback(() => {
+    setLibraryQuery('')
+    setIsSearchOpen(false)
+  }, [setLibraryQuery])
+
+  const toggleSearch = useCallback(() => {
+    if (isSearchOpen) {
+      closeSearch()
+      return
+    }
+    setIsSearchOpen(true)
+  }, [closeSearch, isSearchOpen])
+
+  useEffect(() => {
+    if (!isSearchOpen) return
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        closeSearch()
+      }
+    }
+
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [closeSearch, isSearchOpen])
+
   return (
     <section className={styles.page}>
       <div className={styles.toolbar}>
-        <div className={styles.viewSwitch} aria-label={t('home.viewToggle')}>
-          <button
-            aria-label={t('home.cardsView')}
-            className={classNames(styles.viewButton, { [styles.active]: libraryView === 'cards' })}
-            type="button"
-            onClick={() => setLibraryView('cards')}
-          >
-            <AppstoreOutline />
-          </button>
-          <button
-            aria-label={t('home.listView')}
-            className={classNames(styles.viewButton, { [styles.active]: libraryView === 'list' })}
-            type="button"
-            onClick={() => setLibraryView('list')}
-          >
-            <UnorderedListOutline />
-          </button>
-        </div>
+        {!isSearchOpen && (
+          <div className={styles.viewSwitch} aria-label={t('home.viewToggle')}>
+            <button
+              aria-label={t('home.cardsView')}
+              className={classNames(styles.viewButton, {
+                [styles.active]: libraryView === 'cards',
+              })}
+              type="button"
+              onClick={() => setLibraryView('cards')}
+            >
+              <AppstoreOutline />
+            </button>
+            <button
+              aria-label={t('home.listView')}
+              className={classNames(styles.viewButton, { [styles.active]: libraryView === 'list' })}
+              type="button"
+              onClick={() => setLibraryView('list')}
+            >
+              <UnorderedListOutline />
+            </button>
+          </div>
+        )}
+
+        {isSearchOpen && (
+          <div className={styles.searchInline} role="search">
+            <SearchBar
+              autoFocus
+              placeholder={t('home.librarySearchPlaceholder')}
+              searchIcon={null}
+              showCancelButton={false}
+              value={libraryQuery}
+              onChange={setLibraryQuery}
+            />
+          </div>
+        )}
+
         <button
+          aria-expanded={isSearchOpen}
           aria-label={isSearchOpen ? t('common.cancel') : t('home.librarySearch')}
-          className={classNames(styles.searchButton, { [styles.active]: isSearchOpen })}
+          className={styles.searchButton}
           type="button"
-          onClick={() => {
-            if (isSearchOpen) {
-              setLibraryQuery('')
-            }
-            setIsSearchOpen((value) => !value)
-          }}
+          onClick={toggleSearch}
         >
           {isSearchOpen ? <CloseOutline /> : <SearchOutline />}
         </button>
       </div>
-
-      {isSearchOpen && (
-        <div className={styles.searchPanel}>
-          <SearchBar
-            autoFocus
-            placeholder={t('home.librarySearchPlaceholder')}
-            value={libraryQuery}
-            onChange={setLibraryQuery}
-          />
-        </div>
-      )}
 
       <StatusFilter />
 

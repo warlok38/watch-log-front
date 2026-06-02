@@ -6,15 +6,12 @@
 }
 
 .searchPanel {
-  border: 1px solid color-mix(in srgb, var(--border) 54%, transparent);
   border-radius: var(--radius);
   background: color-mix(in srgb, var(--surface) 78%, transparent);
-  box-shadow: var(--shadow-soft);
 }
 
 .manualCollapse {
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--border) 58%, transparent);
   border-radius: var(--radius);
   background: color-mix(in srgb, var(--surface) 70%, transparent);
 }

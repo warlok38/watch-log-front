@@ -22,7 +22,6 @@
   --adm-border-radius-l: var(--radius);
   --adm-font-size-main: 16px;
   --adm-font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --adm-box-shadow: var(--shadow-soft);
 }
 
 :root[data-theme='dark'] {

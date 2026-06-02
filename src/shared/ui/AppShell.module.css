@@ -50,7 +50,6 @@
   border-radius: var(--radius);
   background: var(--surface-elevated);
   color: var(--text);
-  box-shadow: var(--shadow-soft);
 }
 
 .shell :global(.adm-card-header) {
@@ -69,10 +68,6 @@
 .shell :global(.adm-button) {
   font-weight: 650;
   letter-spacing: -0.01em;
-}
-
-.shell :global(.adm-button:not(.adm-button-fill-none)) {
-  box-shadow: 0 8px 18px color-mix(in srgb, var(--primary) 16%, transparent);
 }
 
 .shell :global(.adm-button-fill-outline) {

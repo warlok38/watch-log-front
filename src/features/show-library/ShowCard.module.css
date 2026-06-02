@@ -3,7 +3,6 @@
   border: 1px solid color-mix(in srgb, var(--border) 68%, transparent);
   border-radius: var(--radius);
   background: var(--surface-elevated);
-  box-shadow: var(--shadow-soft);
   padding: 0;
 }
 

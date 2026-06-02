@@ -17,7 +17,6 @@
   border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
   border-radius: var(--radius);
   background: color-mix(in srgb, var(--surface-elevated) 94%, var(--primary-soft));
-  box-shadow: var(--shadow-soft);
 }
 
 .heroPoster {
@@ -47,9 +46,12 @@
   border: 1px solid color-mix(in srgb, var(--primary) 28%, var(--border));
   border-radius: var(--radius);
   background:
-    linear-gradient(135deg, color-mix(in srgb, var(--primary-soft) 82%, transparent), transparent 72%),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--primary-soft) 82%, transparent),
+      transparent 72%
+    ),
     var(--surface-elevated);
-  box-shadow: 0 14px 34px color-mix(in srgb, var(--primary) 14%, transparent);
 }
 
 .nextEpisodeCard h2 {
@@ -71,7 +73,6 @@
   border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
   border-radius: var(--radius);
   background: color-mix(in srgb, var(--surface-elevated) 94%, transparent);
-  box-shadow: var(--shadow-soft);
 }
 
 .seasonCollapse :global(.adm-list-item) {

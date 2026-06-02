@@ -6,7 +6,6 @@
   border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
   border-radius: var(--radius);
   background: color-mix(in srgb, var(--surface-elevated) 94%, transparent);
-  box-shadow: var(--shadow-soft);
 }
 
 .header {
