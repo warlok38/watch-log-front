@@ -1,5 +1,5 @@
 import { AddOutline, AppOutline, SetOutline } from 'antd-mobile-icons'
-import { SafeArea, TabBar } from 'antd-mobile'
+import { TabBar } from 'antd-mobile'
 import type { PropsWithChildren } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -29,7 +29,6 @@ export function AppShell({ children }: PropsWithChildren) {
             <TabBar.Item key={tab.key} icon={tab.icon} title={t(tab.labelKey)} />
           ))}
         </TabBar>
-        <SafeArea position="bottom" />
       </footer>
     </div>
   )
