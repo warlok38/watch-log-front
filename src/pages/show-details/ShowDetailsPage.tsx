@@ -1,6 +1,6 @@
 import { ActionSheet, Button, Collapse, Dialog, ErrorBlock, Tag } from 'antd-mobile'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
@@ -15,12 +15,10 @@ import {
   shouldShowNextEpisodeCard,
   sortEpisodes,
 } from '@/shared/lib/episodeProgress'
+import { useDetailHeaderVisibility } from '@/shared/lib/useDetailHeaderVisibility'
 import { DetailHeader, ExpandableText, ShowPoster } from '@/shared/ui'
 
 import styles from './ShowDetailsPage.module.css'
-
-const HEADER_SCROLL_THRESHOLD = 14
-const HEADER_TOP_OFFSET = 24
 
 export function ShowDetailsPage() {
   const { i18n, t } = useTranslation()
@@ -83,17 +81,17 @@ export function ShowDetailsPage() {
   }
 
   const handleBack = () => {
-    if (location.key !== 'default' && window.history.length > 1) {
-      navigate(-1)
-      return
-    }
-
     navigate(routes.home)
   }
 
   const handleMenuClick = () => {
     ActionSheet.show({
       actions: [
+        {
+          key: 'edit',
+          text: t('details.edit'),
+          onClick: () => navigate(routes.showEdit(show.id)),
+        },
         {
           key: 'archive',
           text: show.isArchived ? t('details.restoreFromArchive') : t('details.moveToArchive'),
@@ -131,7 +129,13 @@ export function ShowDetailsPage() {
       {locationState?.fromAdd && <p className={styles.hint}>{t('details.afterAddHint')}</p>}
 
       <div className={styles.hero}>
-        <ShowPoster className={styles.heroPoster} src={show.posterUrl} title={show.title} />
+        <ShowPoster
+          className={styles.heroPoster}
+          cacheKey={show.id}
+          posterBlob={show.posterBlob}
+          src={show.posterUrl}
+          title={show.title}
+        />
         <div className={styles.heroBody}>
           <div className={styles.tags}>
             <Tag color="success">{t(`status.${show.status}`)}</Tag>
@@ -262,37 +266,4 @@ function SeasonPanelTitle({
       </span>
     </div>
   )
-}
-
-function useDetailHeaderVisibility(): boolean {
-  const [isHidden, setIsHidden] = useState(false)
-  const previousScrollYRef = useRef(0)
-
-  useEffect(() => {
-    previousScrollYRef.current = window.scrollY
-
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      const delta = currentScrollY - previousScrollYRef.current
-
-      if (currentScrollY <= HEADER_TOP_OFFSET) {
-        setIsHidden(false)
-        previousScrollYRef.current = currentScrollY
-        return
-      }
-
-      if (Math.abs(delta) < HEADER_SCROLL_THRESHOLD) {
-        return
-      }
-
-      setIsHidden(delta < 0)
-      previousScrollYRef.current = currentScrollY
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  return isHidden
 }

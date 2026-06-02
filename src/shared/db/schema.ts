@@ -41,6 +41,13 @@ export class WatchLogDatabase extends Dexie {
             show.isArchived ??= false
           }),
       )
+
+    this.version(3).stores({
+      shows: 'id, status, kind, title, updatedAt, externalStatus, isArchived, [externalProvider+externalId]',
+      episodes: 'id, showId, [showId+seasonNumber+episodeNumber], watched',
+      watchEvents: 'id, showId, createdAt',
+      settings: 'key',
+    })
   }
 }
 

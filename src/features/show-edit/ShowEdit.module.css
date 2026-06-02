@@ -1,0 +1,182 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: calc(18px + var(--safe-top)) 14px 22px;
+}
+
+.page .form:global(.adm-form),
+.page .form:global(.adm-form) :global(.adm-list),
+.page .form:global(.adm-form) :global(.adm-list-body),
+.page .form:global(.adm-form) :global(.adm-list-item),
+.page .form:global(.adm-form) :global(.adm-form-footer) {
+  background: transparent;
+  --border-top: none;
+  --border-bottom: none;
+  --border-inner: none;
+  --padding-left: 0;
+  --padding-right: 0;
+}
+
+.page .form:global(.adm-form) :global(.adm-list-body),
+.page .form:global(.adm-form) :global(.adm-list-item-content) {
+  border: none;
+}
+
+.page .form:global(.adm-form) :global(.adm-list-item-content) {
+  align-items: stretch;
+  padding-right: 0;
+}
+
+.page .form:global(.adm-form) :global(.adm-list-item-content-main) {
+  padding: 0;
+}
+
+.page .form:global(.adm-form) :global(.adm-form-item) {
+  margin-bottom: var(--space-5);
+}
+
+.page .form:global(.adm-form) :global(.adm-form-item:last-child) {
+  margin-bottom: 0;
+}
+
+.page .form:global(.adm-form) :global(.adm-form-item-label) {
+  width: 100%;
+  margin-bottom: var(--space-2);
+  font-size: var(--adm-font-size-7);
+  color: var(--adm-color-text-secondary);
+  font-weight: 500;
+}
+
+.page .form:global(.adm-form) :global(.adm-form-footer) {
+  padding: var(--space-5) 0 0;
+  background: transparent;
+}
+
+.page .form:global(.adm-form) :global(.adm-form-item-child),
+.page .form:global(.adm-form) :global(.adm-form-item-child-inner) {
+  min-width: 0;
+  width: 100%;
+}
+
+.page .form:global(.adm-form) :global(.adm-input),
+.page .form:global(.adm-form) :global(.adm-text-area) {
+  --font-size: var(--adm-font-size-7);
+  --color: var(--text);
+  --placeholder-color: color-mix(in srgb, var(--muted) 72%, transparent);
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+.page .form:global(.adm-form) :global(.adm-input-element),
+.page .form:global(.adm-form) :global(.adm-text-area-element) {
+  padding: 10px 12px;
+  border-radius: var(--radius-xs);
+  background: var(--surface-muted);
+}
+
+.fieldLabelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+}
+
+.fieldLabel {
+  font-size: var(--adm-font-size-7);
+  color: var(--adm-color-text-secondary);
+  font-weight: 500;
+}
+
+.posterHero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+}
+
+.posterField {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.posterFieldCentered {
+  align-items: center;
+}
+
+.posterPickerWrapper {
+  position: relative;
+  width: 120px;
+  height: 180px;
+}
+
+.posterPicker {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 1px dashed color-mix(in srgb, var(--border) 72%, transparent);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface-elevated) 94%, var(--primary-soft));
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.posterPickerFilled {
+  border-style: solid;
+}
+
+.posterPreview {
+  width: 100%;
+  height: 100%;
+}
+
+.posterEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--adm-color-primary);
+  font-size: 32px;
+}
+
+.posterDelete {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  color: var(--adm-color-text);
+  cursor: pointer;
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.formSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.statusField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.saveFooter {
+  padding-top: var(--space-5);
+}

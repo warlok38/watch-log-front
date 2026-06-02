@@ -15,6 +15,11 @@ const ShowDetailsPage = lazy(() =>
     default: module.ShowDetailsPage,
   })),
 )
+const ShowEditPage = lazy(() =>
+  import('@/features/show-edit/ShowEditPage').then((module) => ({
+    default: module.ShowEditPage,
+  })),
+)
 
 export function AppRouter() {
   return (
@@ -23,6 +28,7 @@ export function AppRouter() {
       <Route path={routes.search} element={<SearchPage />} />
       <Route path={routes.settings} element={<SettingsPage />} />
       <Route path="/shows/:showId" element={<ShowDetailsPage />} />
+      <Route path="/shows/:showId/edit" element={<ShowEditPage />} />
       <Route path="*" element={<Navigate to={routes.home} replace />} />
     </Routes>
   )

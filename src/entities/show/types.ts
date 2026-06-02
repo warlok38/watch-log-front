@@ -6,6 +6,23 @@ export type ExternalShowStatus = 'running' | 'ended' | 'to_be_determined' | 'in_
 
 export type ExternalProvider = 'tvmaze' | 'jikan' | 'manual'
 
+export type ProviderSnapshot = {
+  title: string
+  posterUrl?: string
+  summary?: string
+}
+
+export type ShowMetadataField = 'title' | 'posterUrl' | 'summary'
+
+export type ShowMetadataPatch = {
+  title?: string
+  summary?: string
+  posterUrl?: string
+  posterBlob?: Blob | null
+  clearPoster?: boolean
+  externalStatus?: ExternalShowStatus
+}
+
 export type Show = {
   id: string
   title: string
@@ -15,7 +32,9 @@ export type Show = {
   externalStatus: ExternalShowStatus
   isArchived: boolean
   posterUrl?: string
+  posterBlob?: Blob
   summary?: string
+  providerSnapshot?: ProviderSnapshot
   externalProvider: ExternalProvider
   externalId?: string
   seasonsCount: number
@@ -39,6 +58,7 @@ export type ShowDraft = {
   kind: ShowKind
   externalStatus?: ExternalShowStatus
   posterUrl?: string
+  posterBlob?: Blob
   summary?: string
   externalProvider: ExternalProvider
   externalId?: string

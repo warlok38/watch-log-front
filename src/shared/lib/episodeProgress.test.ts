@@ -4,6 +4,7 @@ import type { Episode } from '@/entities/episode'
 import type { Show } from '@/entities/show'
 
 import {
+  getAutomaticWatchStatus,
   getLibrarySortGroup,
   getNextEpisodeAction,
   shouldShowAllCaughtUpBanner,
@@ -292,5 +293,29 @@ describe('sortLibraryShows', () => {
     ).map((show) => show.title)
 
     expect(sortedTitles).toEqual(['Alpha', 'Beta'])
+  })
+})
+
+describe('getAutomaticWatchStatus', () => {
+  it('returns completed for unknown and to_be_determined when all episodes are watched', () => {
+    const unknownShow = createShow({ externalStatus: 'unknown' })
+    const tbdShow = createShow({ externalStatus: 'to_be_determined' })
+
+    expect(getAutomaticWatchStatus(unknownShow, 8, 8, 8)).toBe('completed')
+    expect(getAutomaticWatchStatus(tbdShow, 8, 8, 8)).toBe('completed')
+  })
+
+  it('returns waiting for running and in_development when all episodes are watched', () => {
+    const runningShow = createShow({ externalStatus: 'running' })
+    const inDevelopmentShow = createShow({ externalStatus: 'in_development' })
+
+    expect(getAutomaticWatchStatus(runningShow, 8, 8, 8)).toBe('waiting')
+    expect(getAutomaticWatchStatus(inDevelopmentShow, 8, 8, 8)).toBe('waiting')
+  })
+
+  it('returns completed for ended shows when all episodes are watched', () => {
+    const endedShow = createShow({ externalStatus: 'ended' })
+
+    expect(getAutomaticWatchStatus(endedShow, 8, 8, 8)).toBe('completed')
   })
 })

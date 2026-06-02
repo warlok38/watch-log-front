@@ -10,5 +10,7 @@ export {
   refreshShowProgress,
   toggleEpisodeWatched,
   updateShowArchived,
+  updateShowMetadata,
   updateShowStatus,
+  resetShowField,
 } from './libraryRepository'

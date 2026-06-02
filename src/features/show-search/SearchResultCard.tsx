@@ -1,4 +1,4 @@
-import { Button, Card, Tag, Toast } from 'antd-mobile'
+import { Button, Card, Toast } from 'antd-mobile'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
@@ -40,7 +40,6 @@ export function SearchResultCard({ result }: SearchResultCardProps) {
         <div className={styles.body}>
           <div className={styles.titleRow}>
             <h3>{result.title}</h3>
-            <Tag color={result.kind === 'anime' ? 'purple' : 'primary'}>{t(`kind.${result.kind}`)}</Tag>
           </div>
           <p>{t('search.provider', { provider: result.providerLabel })}</p>
           {result.year && <p>{result.year}</p>}

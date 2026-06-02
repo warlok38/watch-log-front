@@ -8,10 +8,10 @@ type DetailHeaderProps = {
   title: string
   subtitle?: string
   backLabel: string
-  menuLabel: string
+  menuLabel?: string
   hidden?: boolean
   onBack: () => void
-  onMenuClick: () => void
+  onMenuClick?: () => void
 }
 
 export function DetailHeader({
@@ -33,9 +33,13 @@ export function DetailHeader({
         <h1>{title}</h1>
         {subtitle && <p>{subtitle}</p>}
       </div>
-      <Button className={styles.button} fill="none" aria-label={menuLabel} onClick={onMenuClick}>
-        <MoreOutline />
-      </Button>
+      {onMenuClick ? (
+        <Button className={styles.button} fill="none" aria-label={menuLabel} onClick={onMenuClick}>
+          <MoreOutline />
+        </Button>
+      ) : (
+        <span className={styles.button} aria-hidden="true" />
+      )}
     </header>
   )
 }

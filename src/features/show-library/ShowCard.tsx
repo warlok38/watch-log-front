@@ -25,11 +25,10 @@ export function ShowCard({ show, episodes, watchedEpisodes, totalEpisodes }: Sho
   return (
     <Card className={styles.card} onClick={() => navigate(routes.showDetails(show.id))}>
       <div className={styles.layout}>
-        <ShowPoster src={show.posterUrl} title={show.title} />
+        <ShowPoster cacheKey={show.id} posterBlob={show.posterBlob} src={show.posterUrl} title={show.title} />
         <div className={styles.body}>
           <div className={styles.titleRow}>
             <h3>{show.title}</h3>
-            <Tag color={show.kind === 'anime' ? 'purple' : 'primary'}>{t(`kind.${show.kind}`)}</Tag>
           </div>
           <div className={styles.tags}>
             <Tag color="success">{t(`status.${show.status}`)}</Tag>

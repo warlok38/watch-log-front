@@ -1,8 +1,10 @@
-import type { Show, ShowDraft, WatchStatus } from '@/entities/show'
+import type { Show, ShowDraft, ShowMetadataField, ShowMetadataPatch, WatchStatus } from '@/entities/show'
 import type { WatchEvent, WatchEventType } from '@/entities/watch-progress'
 import Dexie from 'dexie'
 
-import { isEpisodeReleased } from '@/shared/lib/episodeProgress'
+import { getAutomaticWatchStatus, isEpisodeReleased } from '@/shared/lib/episodeProgress'
+import { revokePosterBlobUrl } from '@/shared/lib/posterBlobUrlCache'
+import { isShowFieldModified } from '@/shared/lib/showMetadata'
 
 import { buildEpisodes, buildEpisodesFromDraft } from './episodes'
 import { createId } from './ids'
@@ -39,6 +41,14 @@ export async function addShow(draft: ShowDraft): Promise<string> {
     createdAt,
     updatedAt: createdAt,
     ...draft,
+    providerSnapshot:
+      draft.externalProvider !== 'manual'
+        ? {
+            title: draft.title,
+            posterUrl: draft.posterUrl,
+            summary: draft.summary,
+          }
+        : undefined,
   }
 
   await db.transaction('rw', db.shows, db.episodes, async () => {
@@ -51,6 +61,80 @@ export async function addShow(draft: ShowDraft): Promise<string> {
   })
 
   return show.id
+}
+
+export async function updateShowMetadata(showId: string, patch: ShowMetadataPatch): Promise<void> {
+  const show = await db.shows.get(showId)
+  if (!show) return
+
+  if (patch.externalStatus !== undefined && show.externalProvider !== 'manual') {
+    return
+  }
+
+  const updatedAt = nowIso()
+
+  const posterChanged =
+    patch.posterBlob !== undefined || patch.posterUrl !== undefined || patch.clearPoster
+
+  await db.shows.where('id').equals(showId).modify((record) => {
+    record.updatedAt = updatedAt
+
+    if (patch.title !== undefined) record.title = patch.title
+    if (patch.summary !== undefined) record.summary = patch.summary || undefined
+    if (patch.externalStatus !== undefined) record.externalStatus = patch.externalStatus
+
+    if (patch.clearPoster) {
+      delete record.posterBlob
+      delete record.posterUrl
+    }
+
+    if (patch.posterBlob !== undefined) {
+      if (patch.posterBlob === null) {
+        delete record.posterBlob
+      } else {
+        record.posterBlob = patch.posterBlob
+        delete record.posterUrl
+      }
+    }
+
+    if (patch.posterUrl !== undefined) {
+      record.posterUrl = patch.posterUrl || undefined
+      delete record.posterBlob
+    }
+  })
+
+  if (posterChanged) {
+    revokePosterBlobUrl(showId)
+  }
+
+  if (patch.externalStatus !== undefined && show.externalProvider === 'manual') {
+    await refreshShowProgress(showId)
+  }
+}
+
+export async function resetShowField(showId: string, field: ShowMetadataField): Promise<void> {
+  const show = await db.shows.get(showId)
+  if (!show?.providerSnapshot || !isShowFieldModified(show, field)) return
+
+  const snapshot = show.providerSnapshot
+  const updatedAt = nowIso()
+
+  switch (field) {
+    case 'title':
+      await db.shows.update(showId, { title: snapshot.title, updatedAt })
+      break
+    case 'summary':
+      await db.shows.update(showId, { summary: snapshot.summary, updatedAt })
+      break
+    case 'posterUrl':
+      await db.shows.where('id').equals(showId).modify((record) => {
+        record.posterUrl = snapshot.posterUrl
+        delete record.posterBlob
+        record.updatedAt = updatedAt
+      })
+      revokePosterBlobUrl(showId)
+      break
+  }
 }
 
 export async function updateShowStatus(showId: string, status: WatchStatus): Promise<void> {
@@ -189,7 +273,12 @@ async function updateShowProgress(showId: string, updatedAt: string): Promise<vo
     return right.episodeNumber - left.episodeNumber
   })[0]
 
-  const nextStatus = getAutomaticStatus(show, watchedReleasedEpisodes.length, releasedEpisodes.length, episodes.length)
+  const nextStatus = getAutomaticWatchStatus(
+    show,
+    watchedReleasedEpisodes.length,
+    releasedEpisodes.length,
+    episodes.length,
+  )
   const nextSeason = lastWatchedEpisode?.seasonNumber ?? 1
   const nextEpisode = lastWatchedEpisode?.episodeNumber ?? 0
 
@@ -207,27 +296,6 @@ async function updateShowProgress(showId: string, updatedAt: string): Promise<vo
     status: nextStatus,
     updatedAt,
   })
-}
-
-function getAutomaticStatus(
-  show: Show,
-  watchedEpisodes: number,
-  releasedEpisodes: number,
-  totalEpisodes: number,
-): WatchStatus {
-  if (watchedEpisodes === 0 || releasedEpisodes === 0) {
-    return 'planned'
-  }
-
-  if (watchedEpisodes < releasedEpisodes) {
-    return 'watching'
-  }
-
-  if (releasedEpisodes < totalEpisodes) {
-    return 'watching'
-  }
-
-  return show.externalStatus === 'ended' ? 'completed' : 'waiting'
 }
 
 async function addWatchEvent(

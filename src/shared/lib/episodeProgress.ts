@@ -158,3 +158,28 @@ export function sortLibraryShows(
 export function sortShowsAlphabetically(shows: Show[]): Show[] {
   return shows.toSorted(compareShowTitles)
 }
+
+export function getAutomaticWatchStatus(
+  show: Show,
+  watchedEpisodes: number,
+  releasedEpisodes: number,
+  totalEpisodes: number,
+): Show['status'] {
+  if (watchedEpisodes === 0 || releasedEpisodes === 0) {
+    return 'planned'
+  }
+
+  if (watchedEpisodes < releasedEpisodes) {
+    return 'watching'
+  }
+
+  if (releasedEpisodes < totalEpisodes) {
+    return 'watching'
+  }
+
+  if (show.externalStatus === 'running' || show.externalStatus === 'in_development') {
+    return 'waiting'
+  }
+
+  return 'completed'
+}
