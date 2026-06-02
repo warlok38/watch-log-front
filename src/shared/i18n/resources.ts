@@ -88,6 +88,8 @@ export const resources = {
         waitingForRelease: 'Ждем выхода',
         allCaughtUp: 'Все доступное отмечено',
         allCaughtUpDescription: 'Когда появятся новые серии, они будут ждать здесь.',
+        expandSummary: 'Показать полностью',
+        collapseSummary: 'Свернуть',
         actions: 'Действия',
       },
       form: {
@@ -204,6 +206,8 @@ export const resources = {
         waitingForRelease: 'Waiting for release',
         allCaughtUp: 'All available episodes watched',
         allCaughtUpDescription: 'New episodes will appear here when they are available.',
+        expandSummary: 'Show full',
+        collapseSummary: 'Collapse',
         actions: 'Actions',
       },
       form: {

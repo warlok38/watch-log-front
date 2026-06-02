@@ -15,7 +15,7 @@ import {
   shouldShowNextEpisodeCard,
   sortEpisodes,
 } from '@/shared/lib/episodeProgress'
-import { DetailHeader, ShowPoster } from '@/shared/ui'
+import { DetailHeader, ExpandableText, ShowPoster } from '@/shared/ui'
 
 import styles from './ShowDetailsPage.module.css'
 
@@ -137,7 +137,7 @@ export function ShowDetailsPage() {
             <Tag color="success">{t(`status.${show.status}`)}</Tag>
             <Tag>{t(`externalStatus.${show.externalStatus}`)}</Tag>
           </div>
-          {show.summary && <p>{show.summary}</p>}
+          {show.summary && <ExpandableText text={show.summary} />}
         </div>
       </div>
 

@@ -1,4 +1,5 @@
 export { AppShell } from './AppShell'
 export { DetailHeader } from './DetailHeader'
+export { ExpandableText } from './ExpandableText'
 export { PageHeader } from './PageHeader'
 export { ShowPoster } from './ShowPoster'
