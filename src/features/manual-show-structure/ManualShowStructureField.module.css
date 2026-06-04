@@ -67,15 +67,24 @@
 
 .episodeRow {
   display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-3);
+  gap: var(--space-2);
+  min-width: 0;
 }
 
 .episodeLabel {
+  flex: 0 1 auto;
+  min-width: 0;
   font-size: var(--adm-font-size-7);
   color: var(--adm-color-text-secondary);
   font-weight: 500;
+}
+
+.episodeStepper {
+  flex: 0 0 auto;
 }
 
 .warning {

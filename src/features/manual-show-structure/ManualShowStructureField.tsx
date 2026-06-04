@@ -109,14 +109,16 @@ export function ManualShowStructureField({
               <div className={styles.panelBody}>
                 <div className={styles.episodeRow}>
                   <span className={styles.episodeLabel}>{t('form.episodes')}</span>
-                  <EpisodeCountStepper
-                    min={minEpisodeCount}
-                    max={200}
-                    value={season.episodeCount}
-                    onChange={(nextValue) =>
-                      handleEpisodeCountChange(season.seasonNumber, nextValue)
-                    }
-                  />
+                  <div className={styles.episodeStepper}>
+                    <EpisodeCountStepper
+                      min={minEpisodeCount}
+                      max={200}
+                      value={season.episodeCount}
+                      onChange={(nextValue) =>
+                        handleEpisodeCountChange(season.seasonNumber, nextValue)
+                      }
+                    />
+                  </div>
                 </div>
 
                 {unwatchedRemovalCount > 0 && (

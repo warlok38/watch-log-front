@@ -1,5 +1,6 @@
 import { AddOutline, MinusOutline } from 'antd-mobile-icons'
 import { Button, Input } from 'antd-mobile'
+import 'antd-mobile/es/components/stepper/stepper.css'
 import { useState } from 'react'
 
 import { clampEpisodeCount, parsePositiveIntegerInput } from './seasonStructure'
