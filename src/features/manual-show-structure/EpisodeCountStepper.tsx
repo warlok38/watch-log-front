@@ -1,6 +1,6 @@
 import { AddOutline, MinusOutline } from 'antd-mobile-icons'
 import { Button, Input } from 'antd-mobile'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import { clampEpisodeCount, parsePositiveIntegerInput } from './seasonStructure'
 
@@ -14,12 +14,6 @@ type EpisodeCountStepperProps = {
 export function EpisodeCountStepper({ value, min, max, onChange }: EpisodeCountStepperProps) {
   const [focused, setFocused] = useState(false)
   const [inputValue, setInputValue] = useState(String(value))
-
-  useEffect(() => {
-    if (!focused) {
-      setInputValue(String(value))
-    }
-  }, [focused, value])
 
   const commitInput = (text: string) => {
     const nextValue = clampEpisodeCount(parsePositiveIntegerInput(text, value), min, max)
