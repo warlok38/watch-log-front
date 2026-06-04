@@ -1,11 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
-import { Collapse, Empty, ErrorBlock, SearchBar, SpinLoading } from 'antd-mobile'
+import { Empty, ErrorBlock, SearchBar, SpinLoading } from 'antd-mobile'
+import { AddOutline } from 'antd-mobile-icons'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 
-import { ManualShowForm } from '@/features/manual-show-create'
 import { SearchResultCard } from '@/features/show-search'
 import { searchShows } from '@/shared/api'
+import { routes } from '@/shared/config/routes'
 import { PageHeader } from '@/shared/ui'
 
 import styles from './SearchPage.module.css'
@@ -32,11 +34,10 @@ export function SearchPage() {
         <SearchBar placeholder={t('search.placeholder')} value={query} onChange={setQuery} />
       </div>
 
-      <Collapse className={styles.manualCollapse}>
-        <Collapse.Panel key="manual" title={t('search.addManual')}>
-          <ManualShowForm />
-        </Collapse.Panel>
-      </Collapse>
+      <Link className={styles.manualLink} to={routes.showCreate}>
+        <span>{t('search.addManual')}</span>
+        <AddOutline />
+      </Link>
 
       {(isWaitingForDebounce || isFetching) && <SpinLoading className={styles.centerLoader} />}
       {isError && <ErrorBlock status="default" />}

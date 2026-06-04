@@ -12,5 +12,6 @@ export {
   updateShowArchived,
   updateShowMetadata,
   updateShowStatus,
+  updateShowStructure,
   resetShowField,
 } from './libraryRepository'

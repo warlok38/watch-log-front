@@ -1,5 +1,6 @@
 import type { Episode } from '@/entities/episode'
 import type { ShowEpisodeDraft } from '@/entities/show'
+import type { SeasonStructureItem } from '@/features/manual-show-structure/types'
 
 export function buildEpisodes(showId: string, seasonsCount: number, episodesPerSeason: number): Episode[] {
   return Array.from({ length: seasonsCount }).flatMap((_, seasonIndex) =>
@@ -23,4 +24,19 @@ export function buildEpisodesFromDraft(showId: string, episodeDrafts: ShowEpisod
     airDate: episode.airDate,
     watched: false,
   }))
+}
+
+export function buildEpisodesFromStructure(
+  showId: string,
+  structure: SeasonStructureItem[],
+): Episode[] {
+  return structure.flatMap((season) =>
+    Array.from({ length: season.episodeCount }, (_, episodeIndex) => ({
+      id: `${showId}_s${season.seasonNumber}_e${episodeIndex + 1}`,
+      showId,
+      seasonNumber: season.seasonNumber,
+      episodeNumber: episodeIndex + 1,
+      watched: false,
+    })),
+  )
 }

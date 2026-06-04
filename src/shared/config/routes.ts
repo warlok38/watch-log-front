@@ -4,4 +4,5 @@ export const routes = {
   settings: '/settings',
   showDetails: (showId: string) => `/shows/${showId}`,
   showEdit: (showId: string) => `/shows/${showId}/edit`,
+  showCreate: '/shows/create',
 }

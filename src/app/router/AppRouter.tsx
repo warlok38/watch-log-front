@@ -20,6 +20,11 @@ const ShowEditPage = lazy(() =>
     default: module.ShowEditPage,
   })),
 )
+const ManualShowCreatePage = lazy(() =>
+  import('@/features/manual-show-create/ManualShowCreatePage').then((module) => ({
+    default: module.ManualShowCreatePage,
+  })),
+)
 
 export function AppRouter() {
   return (
@@ -28,6 +33,7 @@ export function AppRouter() {
       <Route path={routes.search} element={<SearchPage />} />
       <Route path={routes.settings} element={<SettingsPage />} />
       <Route path="/shows/:showId" element={<ShowDetailsPage />} />
+      <Route path={routes.showCreate} element={<ManualShowCreatePage />} />
       <Route path="/shows/:showId/edit" element={<ShowEditPage />} />
       <Route path="*" element={<Navigate to={routes.home} replace />} />
     </Routes>

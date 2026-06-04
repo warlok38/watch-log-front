@@ -1,0 +1,120 @@
+.seasonCollapse {
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface-elevated) 94%, transparent);
+}
+
+.seasonCollapse :global(.adm-list-item) {
+  background: transparent;
+}
+
+.seasonCollapse :global(.adm-list-item-content) {
+  border-color: var(--border);
+}
+
+.seasonCollapse :global(.adm-collapse-panel-content) {
+  background: transparent;
+}
+
+.seasonCollapse :global(.adm-collapse-panel-content-inner) {
+  padding: 0;
+}
+
+.seasonCollapse :global(.adm-collapse-panel-content-inner > section) {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+  margin-bottom: var(--space-5);
+}
+
+.fieldLabel {
+  font-size: var(--adm-font-size-7);
+  color: var(--adm-color-text-secondary);
+  font-weight: 500;
+}
+
+.seasonPanelTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.seasonPanelMeta {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.panelBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: 0 var(--space-3) var(--space-3);
+}
+
+.episodeRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.episodeLabel {
+  font-size: var(--adm-font-size-7);
+  color: var(--adm-color-text-secondary);
+  font-weight: 500;
+}
+
+.warning {
+  margin: 0;
+  color: #d97706;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.deleteSeason {
+  align-self: flex-start;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #dc2626;
+  font-size: var(--adm-font-size-7);
+  cursor: pointer;
+}
+
+.addSeason {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 44px;
+  margin-top: var(--space-2);
+  padding: 10px 12px;
+  border: 1px dashed color-mix(in srgb, var(--adm-color-primary) 56%, var(--border));
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--adm-color-primary);
+  font-size: var(--adm-font-size-7);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.total {
+  margin: var(--space-2) 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}

@@ -10,10 +10,15 @@
   background: color-mix(in srgb, var(--surface) 78%, transparent);
 }
 
-.manualCollapse {
-  overflow: hidden;
-  border-radius: var(--radius);
-  background: color-mix(in srgb, var(--surface) 70%, transparent);
+.manualLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  font-size: var(--adm-font-size-7);
+  font-weight: 500;
+  color: var(--adm-color-primary);
+  text-decoration: none;
 }
 
 .centerLoader {

@@ -65,6 +65,10 @@ export function ShowEditPage() {
     }
   }
 
+  const handleSaved = () => {
+    setPosterOverride(null)
+  }
+
   return (
     <section className={styles.page}>
       <DetailHeader
@@ -88,7 +92,7 @@ export function ShowEditPage() {
         show={show}
         poster={poster}
         formVersion={formVersion}
-        onSaved={handleBack}
+        onSaved={handleSaved}
         onFormVersionChange={() => setFormVersion((current) => current + 1)}
       />
     </section>

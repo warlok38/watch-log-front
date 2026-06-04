@@ -1,9 +1,20 @@
 import { Button, Form, Input, TextArea, Toast } from 'antd-mobile'
-import { useCallback, useRef } from 'react'
+import { useLiveQuery } from 'dexie-react-hooks'
+import { useCallback, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import type { Episode } from '@/entities/episode'
 import type { ProviderSnapshot, Show, ShowMetadataField } from '@/entities/show'
-import { resetShowField, updateShowMetadata } from '@/shared/db'
+import {
+  createDefaultStructure,
+  getWatchedBySeasonForStructure,
+  getWatchedCountsBySeason,
+  ManualShowStructureField,
+  seasonStructureFromEpisodes,
+  validateSeasonStructure,
+} from '@/features/manual-show-structure'
+import type { SeasonStructureItem } from '@/features/manual-show-structure'
+import { db, resetShowField, updateShowMetadata, updateShowStructure } from '@/shared/db'
 import {
   getPosterMetadataPatch,
   isDraftFieldModified,
@@ -58,6 +69,10 @@ function getDraftFromForm(
   }
 }
 
+function getStructureFromEpisodes(episodes: Episode[]): SeasonStructureItem[] {
+  return episodes.length > 0 ? seasonStructureFromEpisodes(episodes) : createDefaultStructure()
+}
+
 export function ShowEditForm({
   show,
   poster,
@@ -70,6 +85,22 @@ export function ShowEditForm({
   const isManual = show.externalProvider === 'manual'
   const snapshot = show.providerSnapshot
   const externalStatusRef = useRef(show.externalStatus)
+  const [structureDraft, setStructureDraft] = useState<SeasonStructureItem[] | null>(null)
+  const [structureBaseline, setStructureBaseline] = useState<SeasonStructureItem[] | null>(null)
+  const episodes = useLiveQuery(
+    () => (isManual ? db.episodes.where('showId').equals(show.id).toArray() : []),
+    [isManual, show.id],
+  )
+
+  if (isManual && episodes !== undefined && structureDraft === null) {
+    const next = getStructureFromEpisodes(episodes)
+    setStructureDraft(next)
+    setStructureBaseline(next)
+  }
+
+  const handleStructureChange = useCallback((nextStructure: SeasonStructureItem[]) => {
+    setStructureDraft(nextStructure)
+  }, [])
 
   const isFieldResetVisible = useCallback(
     (field: ShowMetadataField, title: string, summary: string) => {
@@ -101,7 +132,28 @@ export function ShowEditForm({
     }
   }
 
+  const syncStructureFromDb = async () => {
+    const freshEpisodes = await db.episodes.where('showId').equals(show.id).toArray()
+    const next = getStructureFromEpisodes(freshEpisodes)
+
+    setStructureDraft(next)
+    setStructureBaseline(next)
+  }
+
   const handleFinish = async (values: ShowEditFormValues) => {
+    const structure = structureDraft
+
+    if (isManual && structure) {
+      const watchedBySeason = getWatchedCountsBySeason(episodes ?? [])
+      const validationWatchedBySeason = getWatchedBySeasonForStructure(structure, watchedBySeason)
+      const validationErrors = validateSeasonStructure(structure, validationWatchedBySeason)
+
+      if (validationErrors.length > 0) {
+        Toast.show({ content: t(`structure.${validationErrors[0]}`) })
+        return
+      }
+    }
+
     const posterPatch = getPosterMetadataPatch(poster, show)
 
     await updateShowMetadata(show.id, {
@@ -110,6 +162,16 @@ export function ShowEditForm({
       ...(isManual ? { externalStatus: externalStatusRef.current } : {}),
       ...posterPatch,
     })
+
+    if (isManual && structure) {
+      try {
+        await updateShowStructure(show.id, structure)
+        await syncStructureFromDb()
+      } catch {
+        Toast.show({ content: t('structure.cannotReduceBelowWatched') })
+        return
+      }
+    }
 
     Toast.show({ content: t('edit.saved') })
     onSaved()
@@ -167,9 +229,19 @@ export function ShowEditForm({
         </Form.Subscribe>
       </Form>
 
+      {isManual && structureDraft && episodes !== undefined && (
+        <ManualShowStructureField
+          value={structureDraft}
+          originalStructure={structureBaseline ?? structureDraft}
+          watchedBySeason={getWatchedCountsBySeason(episodes)}
+          defaultActiveSeason={show.currentSeason}
+          onChange={handleStructureChange}
+        />
+      )}
+
       {isManual && (
         <ExternalStatusField
-          key={`${show.id}-${formVersion}`}
+          key={`${show.id}-${show.externalStatus}-${show.updatedAt}`}
           initialStatus={show.externalStatus}
           onChange={(status) => {
             externalStatusRef.current = status

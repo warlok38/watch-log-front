@@ -1,36 +1,61 @@
-import { Button, Form, Input, Selector, Stepper, TextArea, Toast } from 'antd-mobile'
-import { useState } from 'react'
+import { Button, Form, Input, TextArea, Toast } from 'antd-mobile'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
 import type { ExternalShowStatus } from '@/entities/show'
-import { getExternalStatusSelectorOptions, ShowPosterField, type PosterFieldValue } from '@/features/show-edit'
+import { ExternalStatusField } from '@/features/show-edit/ExternalStatusField'
+import editStyles from '@/features/show-edit/ShowEdit.module.css'
+import type { PosterFieldValue } from '@/features/show-edit'
+import {
+  createDefaultStructure,
+  getStructureAggregates,
+  ManualShowStructureField,
+  structureToEpisodeDrafts,
+  validateSeasonStructure,
+} from '@/features/manual-show-structure'
+import type { SeasonStructureItem } from '@/features/manual-show-structure'
 import { routes } from '@/shared/config/routes'
 import { addShow } from '@/shared/db'
+
 type ManualShowFormValues = {
   title: string
   summary: string
-  externalStatus: ExternalShowStatus[]
-  seasonsCount: number
-  episodesPerSeason: number
 }
 
-export function ManualShowForm() {
+type ManualShowFormProps = {
+  poster: PosterFieldValue
+  onTitleChange?: (title: string) => void
+}
+
+export function ManualShowForm({ poster, onTitleChange }: ManualShowFormProps) {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const [poster, setPoster] = useState<PosterFieldValue>({})
+  const [form] = Form.useForm<ManualShowFormValues>()
+  const externalStatusRef = useRef<ExternalShowStatus>('unknown')
+  const [structure, setStructure] = useState<SeasonStructureItem[]>(createDefaultStructure)
 
   const handleFinish = async (values: ManualShowFormValues) => {
+    const validationErrors = validateSeasonStructure(structure)
+
+    if (validationErrors.length > 0) {
+      Toast.show({ content: t(`structure.${validationErrors[0]}`) })
+      return
+    }
+
+    const aggregates = getStructureAggregates(structure)
+
     const id = await addShow({
       title: values.title,
       kind: 'series',
       externalProvider: 'manual',
-      externalStatus: values.externalStatus[0],
+      externalStatus: externalStatusRef.current,
       summary: values.summary || undefined,
       posterBlob: poster.posterBlob,
       posterUrl: poster.posterUrl,
-      seasonsCount: values.seasonsCount,
-      episodesPerSeason: values.episodesPerSeason,
+      seasonsCount: aggregates.seasonsCount,
+      episodesPerSeason: aggregates.episodesPerSeason,
+      episodes: structureToEpisodeDrafts(structure),
     })
 
     Toast.show({ content: t('search.add') })
@@ -38,41 +63,46 @@ export function ManualShowForm() {
   }
 
   return (
-    <Form
-      layout="vertical"
-      initialValues={{
-        externalStatus: ['unknown'],
-        seasonsCount: 1,
-        episodesPerSeason: 12,
-        summary: '',
-      }}
-      footer={
-        <Button block type="submit" color="primary" size="large">
-          {t('form.save')}
+    <>
+      <Form
+        className={editStyles.form}
+        form={form}
+        layout="vertical"
+        initialValues={{
+          summary: '',
+        }}
+        onFinish={(values) => void handleFinish(values as ManualShowFormValues)}
+      >
+        <Form.Subscribe to={['title']}>
+          {(values) => {
+            onTitleChange?.(String(values.title ?? ''))
+            return null
+          }}
+        </Form.Subscribe>
+
+        <Form.Item name="title" label={t('form.title')} rules={[{ required: true }]}>
+          <Input placeholder={t('form.title')} />
+        </Form.Item>
+
+        <Form.Item name="summary" label={t('edit.summary')}>
+          <TextArea placeholder={t('edit.summary')} autoSize={{ minRows: 1, maxRows: 4 }} />
+        </Form.Item>
+      </Form>
+
+      <ManualShowStructureField value={structure} onChange={setStructure} />
+
+      <ExternalStatusField
+        initialStatus="unknown"
+        onChange={(status) => {
+          externalStatusRef.current = status
+        }}
+      />
+
+      <div className={editStyles.saveFooter}>
+        <Button block color="primary" size="large" onClick={() => form.submit()}>
+          {t('edit.save')}
         </Button>
-      }
-      onFinish={(values) => void handleFinish(values as ManualShowFormValues)}
-    >
-      <Form.Item name="title" label={t('form.title')} rules={[{ required: true }]}>
-        <Input placeholder={t('form.title')} />
-      </Form.Item>
-
-      <ShowPosterField cacheKey="manual-draft" title="" value={poster} onChange={setPoster} />
-
-      <Form.Item name="summary" label={t('form.summary')}>
-        <TextArea placeholder={t('form.summary')} autoSize={{ minRows: 1, maxRows: 4 }} />
-      </Form.Item>
-
-      <Form.Item name="externalStatus" label={t('form.externalStatus')}>
-        <Selector options={getExternalStatusSelectorOptions(t)} />
-      </Form.Item>
-
-      <Form.Item name="seasonsCount" label={t('form.seasons')}>
-        <Stepper min={1} max={50} />
-      </Form.Item>
-      <Form.Item name="episodesPerSeason" label={t('form.episodes')}>
-        <Stepper min={1} max={200} />
-      </Form.Item>
-    </Form>
+      </div>
+    </>
   )
 }

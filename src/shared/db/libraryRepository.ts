@@ -2,11 +2,20 @@ import type { Show, ShowDraft, ShowMetadataField, ShowMetadataPatch, WatchStatus
 import type { WatchEvent, WatchEventType } from '@/entities/watch-progress'
 import Dexie from 'dexie'
 
+import type { SeasonStructureItem } from '@/features/manual-show-structure/types'
+import {
+  getSourceSeasonNumber,
+  getStructureAggregates,
+  getWatchedBySeasonForStructure,
+  getWatchedCountsBySeason,
+  normalizeSeasonNumbers,
+  validateSeasonStructure,
+} from '@/features/manual-show-structure/seasonStructure'
 import { getAutomaticWatchStatus, isEpisodeReleased } from '@/shared/lib/episodeProgress'
 import { revokePosterBlobUrl } from '@/shared/lib/posterBlobUrlCache'
 import { isShowFieldModified } from '@/shared/lib/showMetadata'
 
-import { buildEpisodes, buildEpisodesFromDraft } from './episodes'
+import { buildEpisodes, buildEpisodesFromDraft, buildEpisodesFromStructure } from './episodes'
 import { createId } from './ids'
 import { db } from './schema'
 
@@ -110,6 +119,111 @@ export async function updateShowMetadata(showId: string, patch: ShowMetadataPatc
   if (patch.externalStatus !== undefined && show.externalProvider === 'manual') {
     await refreshShowProgress(showId)
   }
+}
+
+export async function updateShowStructure(
+  showId: string,
+  structure: SeasonStructureItem[],
+): Promise<void> {
+  const show = await db.shows.get(showId)
+  if (!show || show.externalProvider !== 'manual') return
+
+  const normalizedStructure = normalizeSeasonNumbers(structure)
+  const currentEpisodes = await db.episodes.where('showId').equals(showId).toArray()
+  const watchedBySeason = getWatchedCountsBySeason(currentEpisodes)
+  const validationWatchedBySeason = getWatchedBySeasonForStructure(
+    normalizedStructure,
+    watchedBySeason,
+  )
+  const validationErrors = validateSeasonStructure(normalizedStructure, validationWatchedBySeason)
+
+  if (validationErrors.length > 0) {
+    throw new Error(validationErrors[0])
+  }
+
+  const keptSourceSeasons = new Set(
+    normalizedStructure.map((season) => getSourceSeasonNumber(season)),
+  )
+  const removedEpisodes = currentEpisodes.filter(
+    (episode) => !keptSourceSeasons.has(episode.seasonNumber),
+  )
+
+  const updatedAt = nowIso()
+  const aggregates = getStructureAggregates(normalizedStructure)
+
+  await db.transaction('rw', db.shows, db.episodes, async () => {
+    if (removedEpisodes.length > 0) {
+      await db.episodes.bulkDelete(removedEpisodes.map((episode) => episode.id))
+    }
+
+    for (const seasonItem of normalizedStructure) {
+      const sourceSeasonNumber = getSourceSeasonNumber(seasonItem)
+      const targetSeasonNumber = seasonItem.seasonNumber
+      const sourceEpisodes = currentEpisodes.filter(
+        (episode) => episode.seasonNumber === sourceSeasonNumber,
+      )
+      const seasonEpisodes = sourceEpisodes.filter(
+        (episode) => !removedEpisodes.some((removedEpisode) => removedEpisode.id === episode.id),
+      )
+
+      if (sourceSeasonNumber !== targetSeasonNumber) {
+        for (const episode of seasonEpisodes) {
+          const nextEpisode = {
+            ...episode,
+            id: `${showId}_s${targetSeasonNumber}_e${episode.episodeNumber}`,
+            seasonNumber: targetSeasonNumber,
+          }
+
+          await db.episodes.delete(episode.id)
+          await db.episodes.add(nextEpisode)
+          episode.id = nextEpisode.id
+          episode.seasonNumber = nextEpisode.seasonNumber
+        }
+      }
+
+      const currentCount =
+        seasonEpisodes.length > 0
+          ? Math.max(...seasonEpisodes.map((episode) => episode.episodeNumber))
+          : 0
+      const newCount = seasonItem.episodeCount
+
+      if (currentCount === 0) {
+        await db.episodes.bulkAdd(buildEpisodesFromStructure(showId, [seasonItem]))
+        continue
+      }
+
+      if (newCount > currentCount) {
+        const episodesToAdd = Array.from({ length: newCount - currentCount }, (_, index) => ({
+          id: `${showId}_s${targetSeasonNumber}_e${currentCount + index + 1}`,
+          showId,
+          seasonNumber: targetSeasonNumber,
+          episodeNumber: currentCount + index + 1,
+          watched: false,
+        }))
+
+        await db.episodes.bulkAdd(episodesToAdd)
+        continue
+      }
+
+      if (newCount < currentCount) {
+        const episodesToDelete = seasonEpisodes.filter(
+          (episode) => episode.episodeNumber > newCount && !episode.watched,
+        )
+
+        if (episodesToDelete.length > 0) {
+          await db.episodes.bulkDelete(episodesToDelete.map((episode) => episode.id))
+        }
+      }
+    }
+
+    await db.shows.update(showId, {
+      seasonsCount: aggregates.seasonsCount,
+      episodesPerSeason: aggregates.episodesPerSeason,
+      updatedAt,
+    })
+  })
+
+  await refreshShowProgress(showId)
 }
 
 export async function resetShowField(showId: string, field: ShowMetadataField): Promise<void> {
