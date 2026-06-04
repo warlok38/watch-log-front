@@ -31,6 +31,15 @@
   background: color-mix(in srgb, var(--surface) 88%, transparent);
   box-shadow: 0 -12px 32px rgb(34 48 76 / 8%);
   backdrop-filter: blur(20px);
+  touch-action: manipulation;
+}
+
+/* Android Chrome "Touch to Search" on tab labels (e.g. «Библиотека») */
+.tabs :global(.adm-tab-bar),
+.tabs :global(.adm-tab-bar *) {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
 .shell :global(.adm-tab-bar) {
