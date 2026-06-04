@@ -63,36 +63,43 @@ export function ShowPosterField({
         </div>
       )}
       <div className={classNames(styles.posterField, centered && styles.posterFieldCentered)}>
-        <div className={styles.posterPickerWrapper}>
-          <button
-            type="button"
-            className={classNames(styles.posterPicker, { [styles.posterPickerFilled]: hasPoster })}
-            onClick={openFilePicker}
-            aria-label={t('edit.uploadPoster')}
-          >
-            {hasPoster ? (
-              <ShowPoster
-                className={styles.posterPreview}
-                cacheKey={cacheKey}
-                posterBlob={value.posterBlob}
-                src={value.posterUrl}
-                title={title}
-              />
-            ) : (
-              <span className={styles.posterEmpty}>
-                <AddOutline />
-              </span>
-            )}
-          </button>
-          {hasPoster && (
+        <div className={centered ? styles.posterHeroRow : styles.posterPickerOnly}>
+          <div className={styles.posterPickerWrapper}>
             <button
               type="button"
-              className={styles.posterDelete}
-              aria-label={t('edit.removePoster')}
-              onClick={handleDelete}
+              className={classNames(styles.posterPicker, { [styles.posterPickerFilled]: hasPoster })}
+              onClick={openFilePicker}
+              aria-label={t('edit.uploadPoster')}
             >
-              <CloseOutline />
+              {hasPoster ? (
+                <ShowPoster
+                  className={styles.posterPreview}
+                  cacheKey={cacheKey}
+                  posterBlob={value.posterBlob}
+                  src={value.posterUrl}
+                  title={title}
+                />
+              ) : (
+                <span className={styles.posterEmpty}>
+                  <AddOutline />
+                </span>
+              )}
             </button>
+            {hasPoster && (
+              <button
+                type="button"
+                className={styles.posterDelete}
+                aria-label={t('edit.removePoster')}
+                onClick={handleDelete}
+              >
+                <CloseOutline />
+              </button>
+            )}
+          </div>
+          {centered && onReset && (
+            <div className={styles.posterHeroReset}>
+              <ShowEditFieldReset visible={showReset} onReset={onReset} />
+            </div>
           )}
         </div>
         <input
@@ -103,7 +110,6 @@ export function ShowPosterField({
           onChange={handleFileChange}
         />
       </div>
-      {!showLabel && onReset && <ShowEditFieldReset visible={showReset} onReset={onReset} />}
     </div>
   )
 }

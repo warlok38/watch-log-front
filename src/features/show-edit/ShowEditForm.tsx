@@ -1,5 +1,5 @@
 import { Button, Form, Input, TextArea, Toast } from 'antd-mobile'
-import { useRef } from 'react'
+import { useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import type { ProviderSnapshot, Show, ShowMetadataField } from '@/entities/show'
@@ -69,10 +69,19 @@ export function ShowEditForm({
   const [form] = Form.useForm<ShowEditFormValues>()
   const isManual = show.externalProvider === 'manual'
   const snapshot = show.providerSnapshot
-  const title = Form.useWatch('title', form) ?? show.title
-  const summary = Form.useWatch('summary', form) ?? show.summary ?? ''
-  const draft = getDraftFromForm(snapshot, title, summary, poster)
   const externalStatusRef = useRef(show.externalStatus)
+
+  const isFieldResetVisible = useCallback(
+    (field: ShowMetadataField, title: string, summary: string) => {
+      if (!snapshot) return false
+
+      const draft = getDraftFromForm(snapshot, title, summary, poster)
+      if (!draft) return false
+
+      return isDraftFieldModified(snapshot, draft, field)
+    },
+    [poster, snapshot],
+  )
 
   const handleReset = async (field: ShowMetadataField) => {
     if (!snapshot) return
@@ -119,32 +128,43 @@ export function ShowEditForm({
         }}
         onFinish={(values) => void handleFinish(values as ShowEditFormValues)}
       >
-        <Form.Item
-          name="title"
-          label={
-            <FieldLabel
-              text={t('form.title')}
-              resetVisible={Boolean(draft && isDraftFieldModified(snapshot!, draft, 'title'))}
-              onReset={() => void handleReset('title')}
-            />
-          }
-          rules={[{ required: true }]}
-        >
-          <Input placeholder={t('form.title')} />
-        </Form.Item>
+        <Form.Subscribe to={['title', 'summary']}>
+          {(values) => {
+            const title = String(values.title ?? show.title)
+            const summary = String(values.summary ?? show.summary ?? '')
 
-        <Form.Item
-          name="summary"
-          label={
-            <FieldLabel
-              text={t('edit.summary')}
-              resetVisible={Boolean(draft && isDraftFieldModified(snapshot!, draft, 'summary'))}
-              onReset={() => void handleReset('summary')}
-            />
-          }
-        >
-          <TextArea placeholder={t('edit.summary')} autoSize={{ minRows: 1, maxRows: 4 }} />
-        </Form.Item>
+            return (
+              <>
+                <Form.Item
+                  name="title"
+                  label={
+                    <FieldLabel
+                      text={t('form.title')}
+                      resetVisible={isFieldResetVisible('title', title, summary)}
+                      onReset={snapshot ? () => void handleReset('title') : undefined}
+                    />
+                  }
+                  rules={[{ required: true }]}
+                >
+                  <Input placeholder={t('form.title')} />
+                </Form.Item>
+
+                <Form.Item
+                  name="summary"
+                  label={
+                    <FieldLabel
+                      text={t('edit.summary')}
+                      resetVisible={isFieldResetVisible('summary', title, summary)}
+                      onReset={snapshot ? () => void handleReset('summary') : undefined}
+                    />
+                  }
+                >
+                  <TextArea placeholder={t('edit.summary')} autoSize={{ minRows: 1, maxRows: 4 }} />
+                </Form.Item>
+              </>
+            )
+          }}
+        </Form.Subscribe>
       </Form>
 
       {isManual && (

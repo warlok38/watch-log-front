@@ -41,11 +41,21 @@
 }
 
 .page .form:global(.adm-form) :global(.adm-form-item-label) {
+  display: block;
   width: 100%;
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-1);
   font-size: var(--adm-font-size-7);
   color: var(--adm-color-text-secondary);
   font-weight: 500;
+}
+
+.page .form:global(.adm-form) :global(.adm-form-item-label) .fieldLabelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  min-height: 28px;
 }
 
 .page .form:global(.adm-form) :global(.adm-form-footer) {
@@ -82,6 +92,21 @@
   justify-content: space-between;
   gap: 8px;
   width: 100%;
+  min-height: 28px;
+}
+
+.resetSlot {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+}
+
+.resetHidden {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .fieldLabel {
@@ -95,7 +120,6 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-2);
-  margin-bottom: var(--space-5);
 }
 
 .posterField {
@@ -106,6 +130,28 @@
 
 .posterFieldCentered {
   align-items: center;
+  width: 100%;
+}
+
+.posterHeroRow {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: start;
+  width: 100%;
+}
+
+.posterHeroRow .posterPickerWrapper {
+  grid-column: 2;
+}
+
+.posterHeroReset {
+  grid-column: 3;
+  align-self: start;
+  padding-left: var(--space-2);
+}
+
+.posterPickerOnly {
+  display: contents;
 }
 
 .posterPickerWrapper {

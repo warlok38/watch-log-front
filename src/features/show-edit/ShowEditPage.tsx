@@ -82,7 +82,7 @@ export function ShowEditPage() {
         value={poster}
         showReset={posterResetVisible}
         onChange={setPosterOverride}
-        onReset={() => void handlePosterReset()}
+        onReset={snapshot ? () => void handlePosterReset() : undefined}
       />
       <ShowEditForm
         show={show}
