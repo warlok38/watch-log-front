@@ -1,10 +1,11 @@
-import { Button, Card, Toast } from 'antd-mobile'
+import { Button, Card, Dialog, Toast } from 'antd-mobile'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { usePwaUpdate } from '@/features/pwa-update'
 import { LanguageSwitcher } from '@/features/language-switcher'
 import { ThemeSwitcher } from '@/features/theme-switcher'
+import { clearLibrary } from '@/shared/db'
 import { nativeBridge } from '@/shared/native'
 import type { NativeUnsubscribe } from '@/shared/native'
 import { PageHeader } from '@/shared/ui'
@@ -15,6 +16,7 @@ export function SettingsPage() {
   const { t } = useTranslation()
   const [isOnline, setIsOnline] = useState(navigator.onLine)
   const [isCheckingUpdate, setIsCheckingUpdate] = useState(false)
+  const [isClearingLibrary, setIsClearingLibrary] = useState(false)
   const { supported: isPwaUpdateSupported, applyUpdate, checkForUpdate } = usePwaUpdate()
 
   useEffect(() => {
@@ -31,6 +33,25 @@ export function SettingsPage() {
       unsubscribe?.()
     }
   }, [])
+
+  const handleClearLibrary = async () => {
+    const confirmed = await Dialog.confirm({
+      cancelText: t('common.cancel'),
+      confirmText: t('settings.clearLibraryConfirm'),
+      content: t('settings.confirmClearLibrary'),
+    })
+
+    if (!confirmed) return
+
+    setIsClearingLibrary(true)
+
+    try {
+      await clearLibrary()
+      Toast.show({ content: t('settings.libraryCleared') })
+    } finally {
+      setIsClearingLibrary(false)
+    }
+  }
 
   const handleCheckUpdate = async () => {
     if (import.meta.env.DEV) {
@@ -80,9 +101,20 @@ export function SettingsPage() {
           </Button>
         </Card>
       ) : null}
+      <Card title={t('settings.data')}>
+        <p className={styles.dataDescription}>{t('settings.storage')}</p>
+        <Button
+          block
+          color="danger"
+          disabled={isClearingLibrary}
+          loading={isClearingLibrary}
+          onClick={() => void handleClearLibrary()}
+        >
+          {t('settings.clearLibrary')}
+        </Button>
+      </Card>
       <Card title={nativeBridge.platform.toUpperCase()}>
         <p>{isOnline ? t('app.online') : t('app.offline')}</p>
-        <p>{t('settings.storage')}</p>
       </Card>
     </section>
   )

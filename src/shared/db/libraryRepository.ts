@@ -277,6 +277,20 @@ export async function deleteShow(showId: string): Promise<void> {
   })
 }
 
+export async function clearLibrary(): Promise<void> {
+  const shows = await db.shows.toArray()
+
+  for (const show of shows) {
+    revokePosterBlobUrl(show.id)
+  }
+
+  await db.transaction('rw', db.shows, db.episodes, db.watchEvents, async () => {
+    await db.watchEvents.clear()
+    await db.episodes.clear()
+    await db.shows.clear()
+  })
+}
+
 export async function markEpisode(showId: string, seasonNumber: number, episodeNumber: number): Promise<void> {
   const watchedAt = nowIso()
   const episode = await db.episodes

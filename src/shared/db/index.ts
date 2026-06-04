@@ -3,6 +3,7 @@ export type { UserSetting } from './schema'
 export {
   addShow,
   buildEpisodes,
+  clearLibrary,
   deleteShow,
   markEpisode,
   markRange,
