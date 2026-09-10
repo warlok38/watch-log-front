@@ -84,7 +84,7 @@ GitHub Actions runs on every push and pull request:
 
 Deployment to GitHub Pages happens automatically on push to `master`.
 
-Live demo: [click here]([url](https://warlok38.github.io/watch-log-front/))
+Live demo: [click here](https://warlok38.github.io/watch-log-front/)
 
 To verify a production build locally with the same base path:
 
